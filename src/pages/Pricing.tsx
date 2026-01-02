@@ -46,6 +46,7 @@ const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
         body: {
           priceId,
           email: user.email,
+          plan, // Pass the plan name ('starter', 'pro')
           returnUrl: window.location.origin
         }
       });
