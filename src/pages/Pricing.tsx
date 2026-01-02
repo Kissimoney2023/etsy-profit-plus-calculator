@@ -33,9 +33,9 @@ const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
       ? import.meta.env.VITE_STRIPE_PRICE_STARTER
       : import.meta.env.VITE_STRIPE_PRICE_PRO;
 
-    if (!priceId || priceId.includes('XXXX')) {
-      alert("Configuration Error: Missing Stripe Price IDs. Please add Vercel Environment Variables: VITE_STRIPE_PRICE_STARTER and VITE_STRIPE_PRICE_PRO with your 'price_...' IDs.");
-      console.error("Missing Price ID. Plan:", plan);
+    if (!priceId || (!priceId.startsWith('price_') && !priceId.startsWith('plan_'))) {
+      alert(`Configuration Error: Invalid Stripe Price ID. You have set: "${priceId || 'undefined'}". It MUST start with 'price_' (not 'prod_'). Please update Vercel Environment Variables.`);
+      console.error("Invalid Price ID:", priceId);
       setUpgradingPlan(null);
       return;
     }
