@@ -72,6 +72,7 @@ const getFeeDescription = (feeKey: string, currencyName: string, symbol: string,
 const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> = ({ user, toolType = 'profit' }) => {
   const [searchParams] = useSearchParams();
   const activeTool = toolType || searchParams.get('tool') || 'profit';
+  const idParam = searchParams.get('id'); // Get ID if editing
 
   // Initialize from LocalStorage Draft
   const [inputs, setInputs] = useState<CalculatorInputs>(() => {
@@ -96,6 +97,40 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY_DRAFT, JSON.stringify(inputs));
   }, [inputs]);
+
+  // Load existing product if ID is present
+  useEffect(() => {
+    const loadProduct = async () => {
+      if (!idParam) return;
+
+      try {
+        if (user) {
+          const { data, error } = await supabase
+            .from('products')
+            .select('*')
+            .eq('id', idParam)
+            .single();
+
+          if (error) throw error;
+          if (data) {
+            setInputs({ ...data.inputs as any, sku: data.sku }); // Ensure inputs are set
+          }
+        } else {
+          const saved = localStorage.getItem(STORAGE_KEY_SAVED);
+          if (saved) {
+            const parsed = JSON.parse(saved);
+            const found = parsed.find((p: any) => p.id === idParam);
+            if (found) {
+              setInputs(found);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error loading product:", error);
+      }
+    };
+    loadProduct();
+  }, [idParam, user]);
 
   useEffect(() => {
     if (activeTool) {
@@ -157,7 +192,8 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
       if (user) {
         const { error } = await supabase
           .from('products')
-          .insert({
+          .upsert({
+            id: idParam || undefined, // Update if ID exists
             user_id: user.id,
             title: inputs.sku,
             sku: inputs.sku,
@@ -181,10 +217,15 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
           ...inputs
         };
 
-        const existingIndex = savedProducts.findIndex((p: any) => p.sku === inputs.sku);
+        const existingIndex = idParam
+          ? savedProducts.findIndex((p: any) => p.id === idParam)
+          : savedProducts.findIndex((p: any) => p.sku === inputs.sku);
+
         if (existingIndex > -1) {
-          savedProducts[existingIndex] = newProduct;
+          // Update existing
+          savedProducts[existingIndex] = { ...savedProducts[existingIndex], ...inputs, title: inputs.sku, timestamp: new Date().toISOString() };
         } else {
+          // Create new
           savedProducts.push(newProduct);
         }
 

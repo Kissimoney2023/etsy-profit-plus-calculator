@@ -11,7 +11,9 @@ import {
   TrendingDown,
   LayoutDashboard,
   Box,
-  FileText
+  FileText,
+  Trash2,
+  Edit
 } from 'lucide-react';
 import { UserProfile, Product, CalculationResult } from '../types';
 import { supabase } from '../lib/supabase';
@@ -59,6 +61,32 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
       console.error('Error fetching products:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (productId: string) => {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+
+    try {
+      if (user) {
+        const { error } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', productId);
+        if (error) throw error;
+      } else {
+        const saved = localStorage.getItem('etsy_saved_products');
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          const updated = parsed.filter((p: any) => p.id !== productId);
+          localStorage.setItem('etsy_saved_products', JSON.stringify(updated));
+        }
+      }
+      // Update UI
+      setProducts(prev => prev.filter(p => p.id !== productId));
+    } catch (error) {
+      console.error('Error deleting product:', error);
+      alert('Failed to delete product');
     }
   };
 
@@ -160,10 +188,7 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
     return acc + result.netProfit; // Assuming 1 sale per month per product for "est"
   }, 0).toFixed(2) : '0';
 
-  // Helper to render product row with calculation
-  const renderProductRow = (product: Product) => (
-    <ProductRow key={product.id} product={product} />
-  );
+
 
   if (!user && !localStorage.getItem('etsy_saved_products')) {
     return (
@@ -248,7 +273,9 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
                   <td colSpan={7} className="px-6 py-10 text-center text-gray-400">No products found. Add your first calculation!</td>
                 </tr>
               ) : (
-                filteredProducts.map((p) => renderProductRow(p))
+                filteredProducts.map((p) => (
+                  <ProductRow key={p.id} product={p} onDelete={handleDelete} />
+                ))
               )}
             </tbody>
           </table>
@@ -258,7 +285,7 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
   );
 };
 
-const ProductRow = ({ product }: { product: Product }) => {
+const ProductRow = ({ product, onDelete }: { product: Product; onDelete: (id: string) => void }) => {
   const inputs = (product.inputs || product) as any;
   const result = calculateEtsyProfit(inputs);
 
@@ -279,8 +306,17 @@ const ProductRow = ({ product }: { product: Product }) => {
         {/* Mock Trend for now */}
         <MoreHorizontal className="w-5 h-5 text-gray-400" />
       </td>
-      <td className="px-6 py-5 text-right">
-        <Link to={`/calculator?id=${product.id}`} className="p-2 text-gray-400 hover:text-secondary inline-block"><ExternalLink className="w-4 h-4" /></Link>
+      <td className="px-6 py-5 text-right flex justify-end space-x-2">
+        <Link to={`/calculator?id=${product.id}`} className="p-2 text-gray-400 hover:text-primary transition-colors inline-block" title="Edit">
+          <Edit className="w-4 h-4" />
+        </Link>
+        <button
+          onClick={() => onDelete(product.id)}
+          className="p-2 text-gray-400 hover:text-red-500 transition-colors inline-block"
+          title="Delete"
+        >
+          <Trash2 className="w-4 h-4" />
+        </button>
       </td>
     </tr>
   );
