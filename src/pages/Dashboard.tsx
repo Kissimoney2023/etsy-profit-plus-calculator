@@ -161,33 +161,9 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
   }, 0).toFixed(2) : '0';
 
   // Helper to render product row with calculation
-  const ProductRow = ({ product }: { product: Product }) => {
-    const inputs = (product.inputs || product) as any;
-    const result = calculateEtsyProfit(inputs);
-
-    return (
-      <tr className="hover:bg-gray-50 transition-colors group">
-        <td className="px-6 py-5">
-          <div className="font-bold text-secondary group-hover:text-primary transition-colors cursor-pointer">{product.title || 'Untitled'}</div>
-        </td>
-        <td className="px-6 py-5 text-sm text-gray-500 font-mono">{product.sku || '-'}</td>
-        <td className="px-6 py-5 font-bold text-secondary">${Number(inputs.itemPrice).toFixed(2)}</td>
-        <td className="px-6 py-5 font-bold text-secondary">${result.netProfit.toFixed(2)}</td>
-        <td className="px-6 py-5">
-          <span className={`px-3 py-1 text-xs font-black rounded-full border ${result.margin > 30 ? 'bg-green-50 text-primary border-green-100' : 'bg-red-50 text-red-500 border-red-100'}`}>
-            {result.margin.toFixed(1)}%
-          </span>
-        </td>
-        <td className="px-6 py-5">
-          {/* Mock Trend for now */}
-          <MoreHorizontal className="w-5 h-5 text-gray-400" />
-        </td>
-        <td className="px-6 py-5 text-right">
-          <Link to={`/calculator?id=${product.id}`} className="p-2 text-gray-400 hover:text-secondary inline-block"><ExternalLink className="w-4 h-4" /></Link>
-        </td>
-      </tr>
-    );
-  };
+  const renderProductRow = (product: Product) => (
+    <ProductRow key={product.id} product={product} />
+  );
 
   if (!user && !localStorage.getItem('etsy_saved_products')) {
     return (
@@ -272,15 +248,41 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
                   <td colSpan={7} className="px-6 py-10 text-center text-gray-400">No products found. Add your first calculation!</td>
                 </tr>
               ) : (
-                filteredProducts.map((p) => (
-                  <ProductRow key={p.id} product={p} />
-                ))
+                filteredProducts.map((p) => renderProductRow(p))
               )}
             </tbody>
           </table>
         </div>
       </div>
     </div>
+  );
+};
+
+const ProductRow = ({ product }: { product: Product }) => {
+  const inputs = (product.inputs || product) as any;
+  const result = calculateEtsyProfit(inputs);
+
+  return (
+    <tr className="hover:bg-gray-50 transition-colors group">
+      <td className="px-6 py-5">
+        <div className="font-bold text-secondary group-hover:text-primary transition-colors cursor-pointer">{product.title || 'Untitled'}</div>
+      </td>
+      <td className="px-6 py-5 text-sm text-gray-500 font-mono">{product.sku || '-'}</td>
+      <td className="px-6 py-5 font-bold text-secondary">${Number(inputs.itemPrice).toFixed(2)}</td>
+      <td className="px-6 py-5 font-bold text-secondary">${result.netProfit.toFixed(2)}</td>
+      <td className="px-6 py-5">
+        <span className={`px-3 py-1 text-xs font-black rounded-full border ${result.margin > 30 ? 'bg-green-50 text-primary border-green-100' : 'bg-red-50 text-red-500 border-red-100'}`}>
+          {result.margin.toFixed(1)}%
+        </span>
+      </td>
+      <td className="px-6 py-5">
+        {/* Mock Trend for now */}
+        <MoreHorizontal className="w-5 h-5 text-gray-400" />
+      </td>
+      <td className="px-6 py-5 text-right">
+        <Link to={`/calculator?id=${product.id}`} className="p-2 text-gray-400 hover:text-secondary inline-block"><ExternalLink className="w-4 h-4" /></Link>
+      </td>
+    </tr>
   );
 };
 

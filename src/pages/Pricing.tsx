@@ -29,13 +29,22 @@ const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
       return;
     }
 
+    const priceId = plan === 'starter'
+      ? import.meta.env.VITE_STRIPE_PRICE_STARTER
+      : import.meta.env.VITE_STRIPE_PRICE_PRO;
+
+    if (!priceId || priceId.includes('XXXX')) {
+      alert("Configuration Error: Missing Stripe Price IDs. Please add Vercel Environment Variables: VITE_STRIPE_PRICE_STARTER and VITE_STRIPE_PRICE_PRO with your 'price_...' IDs.");
+      console.error("Missing Price ID. Plan:", plan);
+      setUpgradingPlan(null);
+      return;
+    }
+
     setUpgradingPlan(plan);
     try {
       const { data, error } = await supabase.functions.invoke('stripe-checkout', {
         body: {
-          priceId: plan === 'starter'
-            ? import.meta.env.VITE_STRIPE_PRICE_STARTER
-            : import.meta.env.VITE_STRIPE_PRICE_PRO,
+          priceId,
           email: user.email,
           returnUrl: window.location.origin
         }
@@ -47,7 +56,7 @@ const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
       }
     } catch (error) {
       console.error('Checkout error:', error);
-      alert('Failed to start checkout');
+      alert('Failed to start checkout. Check console.');
       setUpgradingPlan(null);
     }
   };
