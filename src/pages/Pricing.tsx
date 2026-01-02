@@ -54,9 +54,18 @@ const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
       if (data?.url) {
         window.location.href = data.url;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Checkout error:', error);
-      alert('Failed to start checkout. Check console.');
+
+      // Extract error message from Supabase FunctionsHttpError
+      let errorMessage = error.message;
+      if (error.context && error.context.json && error.context.json.error) {
+        errorMessage = error.context.json.error;
+      } else if (typeof error === 'string') {
+        errorMessage = error;
+      }
+
+      alert(`Checkout Failed: ${errorMessage}`);
       setUpgradingPlan(null);
     }
   };
