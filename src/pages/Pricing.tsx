@@ -33,7 +33,9 @@ const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
     try {
       const { data, error } = await supabase.functions.invoke('stripe-checkout', {
         body: {
-          priceId: plan === 'starter' ? 'price_123_starter' : 'price_456_pro', // Replace with real IDs
+          priceId: plan === 'starter'
+            ? import.meta.env.VITE_STRIPE_PRICE_STARTER
+            : import.meta.env.VITE_STRIPE_PRICE_PRO,
           email: user.email,
           returnUrl: window.location.origin
         }
