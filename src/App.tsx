@@ -237,11 +237,11 @@ const App: React.FC = () => {
         <main className="flex-grow">
           <Routes>
             <Route path="/" element={<Landing />} />
-            <Route path="/calculator" element={<CalculatorPage user={user} />} />
-            <Route path="/etsy-fee-calculator" element={<CalculatorPage user={user} />} />
-            <Route path="/etsy-profit-calculator" element={<CalculatorPage user={user} />} />
-            <Route path="/etsy-offsite-ads-fee-calculator" element={<CalculatorPage user={user} />} />
-            <Route path="/etsy-break-even-price-calculator" element={<CalculatorPage user={user} />} />
+            <Route path="/calculator" element={<CalculatorPage user={user} toolType="profit" />} />
+            <Route path="/etsy-fee-calculator" element={<CalculatorPage user={user} toolType="fees" />} />
+            <Route path="/etsy-profit-calculator" element={<CalculatorPage user={user} toolType="profit" />} />
+            <Route path="/etsy-offsite-ads-fee-calculator" element={<CalculatorPage user={user} toolType="ads" />} />
+            <Route path="/etsy-break-even-price-calculator" element={<CalculatorPage user={user} toolType="breakeven" />} />
             <Route path="/blog" element={<BlogListing />} />
             <Route path="/blog/:slug" element={<BlogPost />} />
             <Route path="/about" element={<About />} />

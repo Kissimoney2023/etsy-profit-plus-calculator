@@ -14,6 +14,7 @@ import {
   RotateCcw,
   HelpCircle
 } from 'lucide-react';
+import { ToolSidebar } from '../components/ToolSidebar';
 import { CalculatorInputs, CalculationResult, UserProfile, CurrencyCode } from '../types';
 import { calculateEtsyProfit } from '../lib/calculator';
 import { supabase } from '../lib/supabase';
@@ -68,9 +69,9 @@ const getFeeDescription = (feeKey: string, currencyName: string, symbol: string,
 };
 
 // Fix: Completed the component definition and added default export to resolve import errors in other files.
-const CalculatorPage: React.FC<{ user: UserProfile | null }> = ({ user }) => {
+const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> = ({ user, toolType = 'profit' }) => {
   const [searchParams] = useSearchParams();
-  const toolParam = searchParams.get('tool');
+  const activeTool = toolType || searchParams.get('tool') || 'profit';
 
   // Initialize from LocalStorage Draft
   const [inputs, setInputs] = useState<CalculatorInputs>(() => {
@@ -97,11 +98,15 @@ const CalculatorPage: React.FC<{ user: UserProfile | null }> = ({ user }) => {
   }, [inputs]);
 
   useEffect(() => {
-    if (toolParam) {
-      if (toolParam === 'offsite-ads') setInputs(prev => ({ ...prev, offsiteAdsEnabled: true }));
-      if (toolParam === 'breakeven') setInputs(prev => ({ ...prev, targetProfitValue: 0 }));
+    if (activeTool) {
+      if (activeTool === 'ads') {
+        setInputs(prev => ({ ...prev, offsiteAdsEnabled: true }));
+      }
+      if (activeTool === 'breakeven') {
+        setInputs(prev => ({ ...prev, targetProfitValue: 0, targetProfitType: 'margin' }));
+      }
     }
-  }, [toolParam]);
+  }, [activeTool]);
 
   useEffect(() => {
     if (!canPerformCalculation(user)) {
@@ -207,103 +212,114 @@ const CalculatorPage: React.FC<{ user: UserProfile | null }> = ({ user }) => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative">
-      {saveMessage && (
-        <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[60] animate-in fade-in slide-in-from-top-4 duration-300">
-          <div className="bg-primary text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 font-black uppercase text-xs tracking-widest">
-            <CheckCircle2 className="w-5 h-5" />
-            <span>{saveMessage}</span>
-          </div>
-        </div>
-      )}
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative flex flex-col lg:flex-row gap-8">
+      <ToolSidebar />
 
-      {usageError && (
-        <div className="mb-8 p-4 bg-red-50 dark:bg-red-950/20 border-2 border-red-100 dark:border-red-900/30 rounded-2xl flex items-center space-x-3 text-red-600 dark:text-red-400 font-bold">
-          <AlertCircle className="w-5 h-5" />
-          <span>{usageError}</span>
-          <Link to="/pricing" className="ml-auto underline">Upgrade Plan</Link>
-        </div>
-      )}
-
-      <div className="mb-12 flex flex-col lg:flex-row lg:items-center justify-between gap-8">
-        <div>
-          <div className="flex items-center space-x-2 text-primary font-black text-[10px] uppercase tracking-[0.2em] mb-3">
-            <CalcIcon className="w-4 h-4" />
-            <span>Etsy Seller Toolkit</span>
-          </div>
-          <h1 className="text-4xl md:text-6xl font-black text-secondary dark:text-white tracking-tighter">
-            {toolParam === 'fees' ? 'Fee Calculator' : toolParam === 'breakeven' ? 'Break-Even Tool' : 'Profit Analyzer'}
-          </h1>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-        <div className="space-y-8">
-          <section className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm">
-            <h2 className="text-xl font-bold mb-6 flex items-center text-secondary dark:text-white">
-              <Tag className="w-5 h-5 mr-3 text-primary" />
-              Listing Information
-            </h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Product SKU / Title</label>
-                <input
-                  type="text"
-                  value={inputs.sku}
-                  onChange={(e) => handleChange('sku', e.target.value)}
-                  placeholder="e.g. Handmade Mug"
-                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary font-bold ${skuError ? 'ring-2 ring-red-500' : ''}`}
-                />
-                {skuError && <p className="text-red-500 text-[10px] mt-1 font-bold uppercase tracking-widest">{skuError}</p>}
-              </div>
+      <div className="flex-grow min-w-0">
+        {saveMessage && (
+          <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[60] animate-in fade-in slide-in-from-top-4 duration-300">
+            <div className="bg-primary text-white px-6 py-3 rounded-2xl shadow-2xl flex items-center space-x-3 font-black uppercase text-xs tracking-widest">
+              <CheckCircle2 className="w-5 h-5" />
+              <span>{saveMessage}</span>
             </div>
-          </section>
+          </div>
+        )}
+
+        {usageError && (
+          <div className="mb-8 p-4 bg-red-50 dark:bg-red-950/20 border-2 border-red-100 dark:border-red-900/30 rounded-2xl flex items-center space-x-3 text-red-600 dark:text-red-400 font-bold">
+            <AlertCircle className="w-5 h-5" />
+            <span>{usageError}</span>
+            <Link to="/pricing" className="ml-auto underline">Upgrade Plan</Link>
+          </div>
+        )}
+
+        <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div>
+            <div className="flex items-center space-x-2 text-primary font-black text-[10px] uppercase tracking-[0.2em] mb-2">
+              <CalcIcon className="w-4 h-4" />
+              <span>Etsy Seller Toolkit</span>
+            </div>
+            <h1 className="text-3xl md:text-5xl font-black text-secondary dark:text-white tracking-tighter">
+              {activeTool === 'fees' ? 'Fee Calculator' : activeTool === 'breakeven' ? 'Break-Even Tool' : activeTool === 'ads' ? 'Ads Scenario Tool' : 'Profit Analyzer'}
+            </h1>
+            <p className="text-gray-500 mt-2 font-medium">
+              {activeTool === 'breakeven'
+                ? 'Find the minimum price you need to charge to cover all costs.'
+                : activeTool === 'ads'
+                  ? 'Calculate how Offsite Ads fees impact your margins.'
+                  : 'Analyze your profit margins and fees with precision.'}
+            </p>
+          </div>
         </div>
 
-        <div className="space-y-8">
-          <section className="bg-secondary dark:bg-slate-950 p-10 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
-            <div className="relative z-10">
-              <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-6">Financial Summary</h2>
-              {results && (
-                <div className="space-y-6">
-                  <div>
-                    <div className="text-5xl font-black tracking-tighter text-primary">
-                      {formatCurrency(results.netProfit, inputs.currency)}
-                    </div>
-                    <div className="text-sm font-bold text-gray-400 uppercase tracking-widest mt-1">Net Profit per Sale</div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/5">
-                    <div>
-                      <div className="text-xl font-black">{results.margin.toFixed(1)}%</div>
-                      <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Profit Margin</div>
-                    </div>
-                    <div>
-                      <div className="text-xl font-black">{formatCurrency(results.fees.total, inputs.currency)}</div>
-                      <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Total Etsy Fees</div>
-                    </div>
-                  </div>
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
+          <div className="space-y-8">
+            <section className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm">
+              <h2 className="text-xl font-bold mb-6 flex items-center text-secondary dark:text-white">
+                <Tag className="w-5 h-5 mr-3 text-primary" />
+                Listing Information
+              </h2>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Product SKU / Title</label>
+                  <input
+                    type="text"
+                    value={inputs.sku}
+                    onChange={(e) => handleChange('sku', e.target.value)}
+                    placeholder="e.g. Handmade Mug"
+                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary font-bold ${skuError ? 'ring-2 ring-red-500' : ''}`}
+                  />
+                  {skuError && <p className="text-red-500 text-[10px] mt-1 font-bold uppercase tracking-widest">{skuError}</p>}
                 </div>
-              )}
-            </div>
-            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
-          </section>
+              </div>
+            </section>
+          </div>
 
-          <div className="flex gap-4">
-            <button
-              onClick={handleSave}
-              disabled={isSaving}
-              className="flex-1 bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center space-x-2 shadow-lg hover:bg-opacity-90 transition-all"
-            >
-              {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-              <span>{isSaving ? 'Saving...' : 'Save Product'}</span>
-            </button>
-            <button
-              onClick={handleReset}
-              className="px-6 py-4 bg-gray-100 dark:bg-slate-800 rounded-2xl text-gray-500 hover:text-red-500 transition-colors"
-              aria-label="Reset fields"
-            >
-              <RotateCcw className="w-5 h-5" />
-            </button>
+          <div className="space-y-8">
+            <section className="bg-secondary dark:bg-slate-950 p-10 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
+              <div className="relative z-10">
+                <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-6">Financial Summary</h2>
+                {results && (
+                  <div className="space-y-6">
+                    <div>
+                      <div className="text-5xl font-black tracking-tighter text-primary">
+                        {formatCurrency(results.netProfit, inputs.currency)}
+                      </div>
+                      <div className="text-sm font-bold text-gray-400 uppercase tracking-widest mt-1">Net Profit per Sale</div>
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/5">
+                      <div>
+                        <div className="text-xl font-black">{results.margin.toFixed(1)}%</div>
+                        <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Profit Margin</div>
+                      </div>
+                      <div>
+                        <div className="text-xl font-black">{formatCurrency(results.fees.total, inputs.currency)}</div>
+                        <div className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Total Etsy Fees</div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
+            </section>
+
+            <div className="flex gap-4">
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="flex-1 bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center space-x-2 shadow-lg hover:bg-opacity-90 transition-all"
+              >
+                {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                <span>{isSaving ? 'Saving...' : 'Save Product'}</span>
+              </button>
+              <button
+                onClick={handleReset}
+                className="px-6 py-4 bg-gray-100 dark:bg-slate-800 rounded-2xl text-gray-500 hover:text-red-500 transition-colors"
+                aria-label="Reset fields"
+              >
+                <RotateCcw className="w-5 h-5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
