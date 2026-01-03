@@ -181,9 +181,9 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
         <div>
           <h1 className="text-3xl font-black text-secondary flex items-center space-x-3">
             <LayoutDashboard className="text-primary w-8 h-8" />
-            <span>Product Inventory</span>
+            <span className="dark:text-white">Product Inventory</span>
           </h1>
-          <p className="text-gray-500 mt-1">Manage your saved calculations and product pricing.</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1">Manage your saved calculations and product pricing.</p>
         </div>
         <div className="flex items-center space-x-3">
           <button
@@ -235,17 +235,17 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
       {/* Filters */}
       <div className="glass p-6 rounded-[32px] mb-8 flex flex-col md:flex-row gap-6 justify-between items-center">
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search products or SKUs..."
-            className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none font-bold text-sm"
+            className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none font-bold text-sm dark:text-white dark:placeholder:text-slate-600"
           />
         </div>
         <div className="flex space-x-3 w-full md:w-auto">
-          <button className="flex-1 md:flex-none flex items-center justify-center space-x-3 px-6 py-3 border border-gray-100 dark:border-slate-800 rounded-2xl text-xs font-black text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-800 uppercase tracking-widest transition-all">
+          <button className="flex-1 md:flex-none flex items-center justify-center space-x-3 px-6 py-3 border border-gray-100 dark:border-slate-800 rounded-2xl text-xs font-black text-slate-500 dark:text-slate-400 hover:bg-gray-50 dark:hover:bg-slate-800 uppercase tracking-widest transition-all">
             <Filter className="w-4 h-4" />
             <span>Filters</span>
           </button>
@@ -300,9 +300,9 @@ const ProductRow: React.FC<{ product: Product; onDelete: (id: string) => void | 
   const result = calculateEtsyProfit(inputs);
 
   return (
-    <tr className="hover:bg-gray-50 transition-colors group">
+    <tr className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors group">
       <td className="px-6 py-5">
-        <div className="font-black text-secondary group-hover:text-primary transition-colors cursor-pointer truncate max-w-[120px] md:max-w-none">{product.title || 'Untitled'}</div>
+        <div className="font-black text-secondary dark:text-white group-hover:text-primary transition-colors cursor-pointer truncate max-w-[120px] md:max-w-none">{product.title || 'Untitled'}</div>
       </td>
       <td className="hidden md:table-cell px-6 py-5 text-sm text-gray-400 font-mono">{product.sku || '-'}</td>
       <td className="hidden md:table-cell px-6 py-5 font-bold text-secondary">${Number(inputs.itemPrice).toFixed(2)}</td>

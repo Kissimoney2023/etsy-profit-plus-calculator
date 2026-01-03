@@ -271,13 +271,13 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Location</label>
+                      <label className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Location</label>
                       <select value={selectedCountry} onChange={(e) => handleCountryChange(e.target.value)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20">
                         {COUNTRY_PRESETS.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Currency</label>
+                      <label className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Currency</label>
                       <select value={inputs.currency} onChange={(e) => handleCurrencyChange(e.target.value as CurrencyCode)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20">
                         {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
                       </select>
@@ -285,7 +285,7 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Item SKU / Name</label>
+                    <label className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Item SKU / Name</label>
                     <div className="relative">
                       <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
@@ -300,23 +300,23 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Item Price</label>
+                      <label className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Item Price</label>
                       <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">{symbol}</span>
-                        <input type="number" value={inputs.itemPrice} onChange={(e) => handleChange('itemPrice', parseFloat(e.target.value) || 0)} className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20" />
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">{symbol}</span>
+                        <input type="number" value={inputs.itemPrice} onChange={(e) => handleChange('itemPrice', parseFloat(e.target.value) || 0)} className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20 dark:text-white" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Shipping Charged</label>
+                      <label className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Shipping Charged</label>
                       <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">{symbol}</span>
-                        <input type="number" value={inputs.shippingCharged} onChange={(e) => handleChange('shippingCharged', parseFloat(e.target.value) || 0)} className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20" />
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">{symbol}</span>
+                        <input type="number" value={inputs.shippingCharged} onChange={(e) => handleChange('shippingCharged', parseFloat(e.target.value) || 0)} className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20 dark:text-white" />
                       </div>
                     </div>
                   </div>
 
                   <div className="pt-4 border-t border-gray-100 dark:border-slate-800">
-                    <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Core Costs</h3>
+                    <h3 className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-4">Core Costs</h3>
                     <div className="grid grid-cols-2 gap-3 mb-3">
                       <div>
                         <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Materials</label>

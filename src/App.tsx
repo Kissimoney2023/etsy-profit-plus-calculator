@@ -151,16 +151,16 @@ const App: React.FC = () => {
                   <TrendingUp className="text-white w-6 h-6" />
                 </div>
                 <span className="text-2xl font-black font-heading text-secondary dark:text-white tracking-tighter">EtsyProfit<span className="text-primary">+</span></span>
-                <span className="text-[10px] font-black text-primary/40 dark:text-gray-600 self-end mb-1.5 ml-1 tracking-tighter">v2.8</span>
+                <span className="text-[10px] font-black text-primary/40 dark:text-slate-500 self-end mb-1.5 ml-1 tracking-tighter">v2.9</span>
               </Link>
               <div className="hidden lg:ml-10 lg:flex lg:space-x-8">
                 {navLinks.map(link => (
-                  <Link key={link.path} to={link.path} className="text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-primary px-3 py-2 text-sm font-bold transition-colors uppercase tracking-wider">
+                  <Link key={link.path} to={link.path} className="text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary px-3 py-2 text-sm font-bold transition-colors uppercase tracking-wider">
                     {link.name}
                   </Link>
                 ))}
                 {user && (
-                  <Link to="/dashboard" className="text-gray-500 dark:text-gray-400 hover:text-primary px-3 py-2 text-sm font-bold transition-colors uppercase tracking-wider">Dashboard</Link>
+                  <Link to="/dashboard" className="text-slate-500 dark:text-slate-400 hover:text-primary px-3 py-2 text-sm font-bold transition-colors uppercase tracking-wider">Dashboard</Link>
                 )}
               </div>
             </div>

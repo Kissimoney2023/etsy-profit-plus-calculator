@@ -10,17 +10,38 @@
   }
 
   .dark {
-    --glass-bg: rgba(15, 23, 42, 0.7);
-    --glass-border: rgba(255, 255, 255, 0.05);
-    --premium-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    --glass-bg: rgba(15, 23, 42, 0.4);
+    --glass-border: rgba(255, 255, 255, 0.1);
+    --premium-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
   }
 
   body {
-    @apply font-sans antialiased bg-slate-50 dark:bg-[#020617] text-slate-900 dark:text-slate-100;
+    @apply font-sans antialiased bg-slate-50 dark:bg-[#020617] text-slate-800 dark:text-slate-200;
+  }
+
+  /* Accessibility & Readability Overrides for Dark Mode */
+  .dark h1,
+  .dark h2,
+  .dark h3,
+  .dark h4 {
+    @apply text-white;
+  }
+
+  .dark p,
+  .dark span:not(.text-primary) {
+    @apply text-slate-400;
+  }
+
+  .dark label {
+    @apply text-slate-500 font-bold;
   }
 }
 
 @layer utilities {
+  .text-premium {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-green-300;
+  }
+
   .glass {
     @apply backdrop-blur-xl border;
     background: var(--glass-bg);

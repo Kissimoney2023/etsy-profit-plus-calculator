@@ -29,7 +29,7 @@ const Landing: React.FC = () => {
               </span>
               <span className="text-secondary dark:text-white block md:inline"> with Precision.</span>
             </h1>
-            <p className="max-w-2xl mx-auto text-xl text-gray-400 dark:text-gray-500 mb-12 font-medium leading-relaxed">
+            <p className="max-w-2xl mx-auto text-xl text-slate-500 dark:text-slate-400 mb-12 font-medium leading-relaxed">
               Ditch the spreadsheets. Our professional calculator accounts for every sneaky fee, including regulatory costs and Offsite Ads protection.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
