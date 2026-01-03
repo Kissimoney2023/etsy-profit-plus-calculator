@@ -41,6 +41,11 @@ export interface CalculationResult {
     regulatory: number;
     total: number;
   };
+  // Convenience properties for easier access
+  transactionFee: number;
+  paymentProcessingFee: number;
+  offsiteAdsFee: number;
+  totalFees: number;
   netProfit: number;
   margin: number;
   breakEvenPrice: number;

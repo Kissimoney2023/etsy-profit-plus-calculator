@@ -25,6 +25,9 @@ import { COUNTRY_PRESETS, CountryPreset } from '../lib/countries';
 import { canPerformCalculation, recordCalculationUsage } from '../lib/usage';
 import { ListingOptimizer } from '../components/ListingOptimizer';
 import { CompetitorCompare } from '../components/CompetitorCompare';
+import { ProfitAnalyzer } from '../components/ProfitAnalyzer';
+import { BreakEvenTool } from '../components/BreakEvenTool';
+import { AdsScenarioTool } from '../components/AdsScenarioTool';
 
 declare global {
   interface Window {
