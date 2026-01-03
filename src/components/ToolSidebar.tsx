@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Calculator, TrendingUp, Target, Megaphone, Sparkles, Swords } from 'lucide-react';
+import { Calculator, TrendingUp, Target, Megaphone, Sparkles, Swords, Search } from 'lucide-react';
 
 export const ToolSidebar: React.FC = () => {
     const location = useLocation();
@@ -35,6 +35,11 @@ export const ToolSidebar: React.FC = () => {
             name: 'Competitor Compare',
             path: '/etsy-competitor-compare',
             icon: <Swords className="w-5 h-5" />
+        },
+        {
+            name: 'AI Trend Hunter',
+            path: '/etsy-trend-hunter',
+            icon: <Search className="w-5 h-5" />
         }
     ];
 

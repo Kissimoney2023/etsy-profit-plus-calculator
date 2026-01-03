@@ -14,7 +14,8 @@ import {
   Tag,
   RotateCcw,
   HelpCircle,
-  Download
+  Download,
+  Sparkles
 } from 'lucide-react';
 import { ToolSidebar } from '../components/ToolSidebar';
 import { CalculatorInputs, CalculationResult, UserProfile, CurrencyCode } from '../types';
@@ -28,6 +29,9 @@ import { CompetitorCompare } from '../components/CompetitorCompare';
 import { ProfitAnalyzer } from '../components/ProfitAnalyzer';
 import { BreakEvenTool } from '../components/BreakEvenTool';
 import { AdsScenarioTool } from '../components/AdsScenarioTool';
+import { ProfitChart } from '../components/ProfitChart';
+import { OnboardingTour } from '../components/OnboardingTour';
+import { TrendHunter } from '../components/TrendHunter';
 
 declare global {
   interface Window {
@@ -204,12 +208,23 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
       case 'compare': return 'Competitor Price Comparison';
       case 'ads': return 'Etsy Ads Fee Calculator';
       case 'breakeven': return 'Etsy Break-Even Calculator';
+      case 'trend': return 'Etsy AI Trend Hunter';
       default: return 'Etsy Profit & Fee Calculator';
     }
   };
 
+  const getProfitabilityScore = (margin: number): { score: number; label: string; color: string; badge: string } => {
+    if (margin >= 45) return { score: Math.round(90 + (margin - 45) * 0.2), label: 'Golden Listing', color: 'text-primary', badge: 'bg-green-50 dark:bg-primary/10 border-primary/20' };
+    if (margin >= 30) return { score: Math.round(70 + (margin - 30) * 1.3), label: 'Healthy Margin', color: 'text-blue-500', badge: 'bg-blue-50 dark:bg-blue-500/10 border-blue-500/20' };
+    if (margin >= 15) return { score: Math.round(40 + (margin - 15) * 2), label: 'Average', color: 'text-orange-500', badge: 'bg-orange-50 dark:bg-orange-500/10 border-orange-500/20' };
+    return { score: Math.max(0, Math.round(margin * 2.6)), label: 'Margin Alert', color: 'text-red-500', badge: 'bg-red-50 dark:bg-red-500/10 border-red-500/20' };
+  };
+
+  const scoreData = useMemo(() => results ? getProfitabilityScore(results.margin) : null, [results]);
+
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 flex flex-col lg:flex-row gap-8" id="calculator-report">
+      <OnboardingTour />
       <SEO
         title={getPageTitle()}
         description="Calculate your real Etsy profit margins, fees, and break-even prices. Includes AI listing optimization and competitor analysis tools."
@@ -224,8 +239,9 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
               activeTool === 'compare' ? 'Competitor Compare' :
                 activeTool === 'breakeven' ? 'Break-Even Calculator' :
                   activeTool === 'ads' ? 'Offsite Ads Analytics' :
-                    activeTool === 'profit' ? 'Profit Strategy Analyzer' :
-                      'Etsy Fee Calculator'}
+                    activeTool === 'trend' ? 'AI Trend Hunter' :
+                      activeTool === 'profit' ? 'Profit Strategy Analyzer' :
+                        'Etsy Fee Calculator'}
           </h1>
         </div>
 
@@ -233,10 +249,12 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
           <ListingOptimizer user={user} />
         ) : activeTool === 'compare' ? (
           <CompetitorCompare inputs={inputs} user={user} />
+        ) : activeTool === 'trend' ? (
+          <TrendHunter user={user} />
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
             {/* Left Column: Inputs (1/3 width) */}
-            <div className="xl:col-span-1 space-y-6">
+            <div className="xl:col-span-1 space-y-6" id="onboarding-inputs">
               <section className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm sticky top-24">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-lg font-bold text-secondary dark:text-white">Listing Inputs</h2>
@@ -324,38 +342,55 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
             {/* Right Column: Dynamic Tool View (2/3 width) */}
             <div className="xl:col-span-2 space-y-8">
               {activeTool === 'fees' && (
-                <div className="space-y-8">
+                <div className="space-y-8" id="onboarding-results">
                   <section className="bg-secondary dark:bg-slate-950 p-10 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -mr-20 -mt-20 blur-3xl animate-pulse"></div>
                     <div className="relative z-10">
                       <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em]">Net Profit Summary</h2>
+                        <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em]">Advanced Profit Analytics</h2>
                         <button onClick={handleDownloadPDF} className="p-2 text-white/40 hover:text-white transition-colors"><Download className="w-5 h-5" /></button>
                       </div>
+
                       {results && (
-                        <div className="space-y-10">
-                          <div>
-                            <div className="flex items-baseline space-x-1">
-                              <span className="text-2xl font-black opacity-30">{symbol}</span>
-                              <div className="text-7xl font-black text-primary tracking-tighter">{results.netProfit.toFixed(2)}</div>
-                            </div>
-                            <div className="text-sm font-bold opacity-40 uppercase tracking-widest mt-2 flex items-center">
-                              <ShieldCheck className="w-4 h-4 mr-2" />
-                              Estimated Net Profit
-                            </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                          {/* Visual Chart */}
+                          <div className="flex justify-center md:justify-start">
+                            <ProfitChart
+                              total={results.revenue}
+                              symbol={symbol}
+                              data={[
+                                { label: 'Net Profit', value: results.netProfit, color: '#10b981' },
+                                { label: 'Etsy Fees', value: results.fees.total, color: '#f59e0b' },
+                                { label: 'Cost of Goods', value: (inputs.cogs + inputs.packagingCost + inputs.shippingCost), color: '#3b82f6' }
+                              ]}
+                            />
                           </div>
-                          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-10 border-t border-white/5">
+
+                          {/* Key Metrics */}
+                          <div className="space-y-8">
                             <div>
-                              <div className="text-2xl font-black">{results.margin.toFixed(1)}%</div>
-                              <div className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">Net Margin</div>
+                              <div className="flex items-baseline space-x-1">
+                                <span className="text-2xl font-black opacity-30">{symbol}</span>
+                                <div className="text-7xl font-black text-primary tracking-tighter">{results.netProfit.toFixed(2)}</div>
+                              </div>
+                              <div className="text-sm font-bold opacity-40 uppercase tracking-widest mt-2 flex items-center">
+                                <ShieldCheck className="w-4 h-4 mr-2" />
+                                Estimated Net Profit
+                              </div>
                             </div>
-                            <div>
-                              <div className="text-2xl font-black">{formatCurrency(results.fees.total, inputs.currency)}</div>
-                              <div className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">Total Fees</div>
-                            </div>
-                            <div className="hidden md:block">
-                              <div className="text-2xl font-black">{results.margin > 30 ? 'HEALTHY' : 'THIN'}</div>
-                              <div className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">Margin Status</div>
+
+                            <div className="grid grid-cols-2 gap-6 pt-8 border-t border-white/5">
+                              <div>
+                                <div className="text-3xl font-black">{results.margin.toFixed(1)}%</div>
+                                <div className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">Net Margin</div>
+                              </div>
+                              <div>
+                                <div className={`inline-flex items-center px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${scoreData?.badge}`}>
+                                  <Sparkles className="w-3 h-3 mr-1.5" />
+                                  {scoreData?.label}
+                                </div>
+                                <div className="text-2xl font-black mt-2">{scoreData?.score} / 100</div>
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -363,22 +398,64 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
                     </div>
                   </section>
 
+                  {/* Pricing Strategies */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="bg-white dark:bg-slate-900 p-8 rounded-[40px] border border-gray-100 dark:border-slate-800 shadow-sm" id="onboarding-ads-safe">
+                      <div className="flex items-center space-x-3 mb-6">
+                        <div className="p-2 bg-orange-50 dark:bg-orange-500/10 rounded-xl text-orange-500">
+                          <AlertCircle className="w-5 h-5" />
+                        </div>
+                        <h3 className="text-sm font-black text-secondary dark:text-white uppercase tracking-[0.2em]">Offsite Ads Safe Price</h3>
+                      </div>
+                      <div className="text-3xl font-black text-secondary dark:text-white mb-2">
+                        {formatCurrency(results?.offsiteAdsSafePrice || 0, inputs.currency)}
+                      </div>
+                      <p className="text-xs font-medium text-gray-400 leading-relaxed">
+                        Charge this amount to maintain your target {inputs.targetProfitValue}% margin even if Etsy charges the 15% Offsite Ads fee.
+                      </p>
+                    </div>
+
+                    <div className="bg-white dark:bg-slate-900 p-8 rounded-[40px] border border-gray-100 dark:border-slate-800 shadow-sm">
+                      <div className="flex items-center space-x-3 mb-6">
+                        <div className="p-2 bg-blue-50 dark:bg-blue-500/10 rounded-xl text-blue-500">
+                          <Zap className="w-5 h-5" />
+                        </div>
+                        <h3 className="text-sm font-black text-secondary dark:text-white uppercase tracking-[0.2em]">Break-Even Price</h3>
+                      </div>
+                      <div className="text-3xl font-black text-secondary dark:text-white mb-2">
+                        {formatCurrency(results?.breakEvenPrice || 0, inputs.currency)}
+                      </div>
+                      <p className="text-xs font-medium text-gray-400 leading-relaxed">
+                        This is your absolute floor. At this price, you make $0.00 profit after all Etsy fees and product costs.
+                      </p>
+                    </div>
+                  </div>
+
                   {/* Fee Breakdown Card */}
-                  <div className="bg-white dark:bg-slate-900 p-8 rounded-[40px] border border-gray-100 dark:border-slate-800 shadow-sm">
-                    <h3 className="text-sm font-black text-secondary dark:text-white uppercase tracking-[0.2em] mb-8">Detailed Fee Breakdown</h3>
-                    <div className="space-y-4">
+                  <div className="bg-white dark:bg-slate-900 p-10 rounded-[40px] border border-gray-100 dark:border-slate-800 shadow-sm relative overflow-hidden group">
+                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+                      <CalcIcon className="w-32 h-32" />
+                    </div>
+                    <h3 className="text-sm font-black text-secondary dark:text-white uppercase tracking-[0.2em] mb-8 flex items-center">
+                      <Info className="w-4 h-4 mr-2 text-primary" />
+                      Detailed Fee Breakdown
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
                       {results && Object.entries(results.fees).map(([key, value]) => {
                         if (key === 'total' || value === 0) return null;
                         return (
-                          <div key={key} className="flex items-center justify-between group">
+                          <div key={key} className="flex items-center justify-between border-b border-gray-50 dark:border-white/5 pb-3">
                             <div className="flex items-center space-x-3">
-                              <div className="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></div>
-                              <span className="text-sm font-bold text-gray-500 dark:text-gray-400">{getFeeDisplayName(key)}</span>
+                              <span className="text-xs font-bold text-gray-400">{getFeeDisplayName(key)}</span>
                             </div>
                             <span className="text-sm font-black text-secondary dark:text-white">{formatCurrency(value as number, inputs.currency)}</span>
                           </div>
                         );
                       })}
+                      <div className="flex items-center justify-between pt-2">
+                        <span className="text-xs font-black text-primary uppercase tracking-widest">Total Etsy Fees</span>
+                        <span className="text-lg font-black text-primary">{formatCurrency(results?.fees.total || 0, inputs.currency)}</span>
+                      </div>
                     </div>
                   </div>
                 </div>

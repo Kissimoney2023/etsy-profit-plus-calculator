@@ -11,12 +11,19 @@ interface OptimizerResult {
     suggestedTags: string[];
     critique: string;
     seoScore: number;
+    pricingStrategy?: {
+        advice: string;
+        suggestedPriceRange: string;
+        marketPosition: string;
+    };
 }
 
 export const ListingOptimizer: React.FC<{ user: UserProfile | null }> = ({ user }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [targetKeyword, setTargetKeyword] = useState('');
+    const [price, setPrice] = useState('');
+    const [currency, setCurrency] = useState('USD');
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState<OptimizerResult | null>(null);
     const [error, setError] = useState('');
@@ -49,7 +56,13 @@ export const ListingOptimizer: React.FC<{ user: UserProfile | null }> = ({ user 
 
         try {
             const { data, error } = await supabase.functions.invoke('optimize-listing', {
-                body: { title, description, targetKeyword }
+                body: {
+                    title,
+                    description,
+                    targetKeyword,
+                    currentPrice: price,
+                    currency
+                }
             });
 
             if (error) {
@@ -124,6 +137,33 @@ export const ListingOptimizer: React.FC<{ user: UserProfile | null }> = ({ user 
                         />
                     </div>
 
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Current Price</label>
+                            <input
+                                type="number"
+                                value={price}
+                                onChange={(e) => setPrice(e.target.value)}
+                                placeholder="0.00"
+                                className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Currency</label>
+                            <select
+                                value={currency}
+                                onChange={(e) => setCurrency(e.target.value)}
+                                className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-indigo-500 font-bold appearance-none"
+                            >
+                                <option value="USD">USD</option>
+                                <option value="EUR">EUR</option>
+                                <option value="GBP">GBP</option>
+                                <option value="CAD">CAD</option>
+                                <option value="AUD">AUD</option>
+                            </select>
+                        </div>
+                    </div>
+
                     {error && (
                         <div className="p-4 bg-red-50 text-red-600 rounded-xl text-sm font-bold flex items-center">
                             <AlertCircle className="w-4 h-4 mr-2" />
@@ -137,7 +177,7 @@ export const ListingOptimizer: React.FC<{ user: UserProfile | null }> = ({ user 
                         className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center space-x-2 transition-all shadow-lg shadow-indigo-200 dark:shadow-none disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                        <span>{loading ? 'Optimizing...' : 'Generate Improvements'}</span>
+                        <span>{loading ? 'Optimizing...' : 'Generate AI Strategy'}</span>
                     </button>
                 </div>
 
@@ -186,6 +226,28 @@ export const ListingOptimizer: React.FC<{ user: UserProfile | null }> = ({ user 
                                         ))}
                                     </div>
                                 </div>
+
+                                {result.pricingStrategy && (
+                                    <div className="pt-6 border-t border-gray-100 dark:border-slate-800 space-y-4">
+                                        <div className="flex items-center space-x-2 text-primary">
+                                            <TrendingUp className="w-4 h-4" />
+                                            <span className="text-xs font-black uppercase tracking-[0.2em]">Pricing Strategy</span>
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-4">
+                                            <div className="p-4 bg-gray-50 dark:bg-slate-800 rounded-2xl">
+                                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Suggested Range</div>
+                                                <div className="text-sm font-black text-secondary dark:text-white">{result.pricingStrategy.suggestedPriceRange}</div>
+                                            </div>
+                                            <div className="p-4 bg-gray-50 dark:bg-slate-800 rounded-2xl">
+                                                <div className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1">Market Position</div>
+                                                <div className="text-sm font-black text-secondary dark:text-white">{result.pricingStrategy.marketPosition}</div>
+                                            </div>
+                                        </div>
+                                        <p className="text-sm font-medium text-gray-500 italic">
+                                            "{result.pricingStrategy.advice}"
+                                        </p>
+                                    </div>
+                                )}
                             </div>
                         </>
                     ) : (
