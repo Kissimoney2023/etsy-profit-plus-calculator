@@ -7,27 +7,27 @@ import { SEO } from '../components/SEO';
 
 const Landing: React.FC = () => {
   return (
-    <div className="overflow-hidden theme-transition">
+    <div className="overflow-hidden theme-transition mesh-gradient">
       <SEO
         title="Etsy Profit Calculator | Fee, Margin & Pricing Tool"
         description="The most accurate 2024 Etsy Fee Calculator. Calculate profit margins, fees, offsite ads, and break-even prices instantly."
         canonical="https://etsyprofitplus.com"
       />
       {/* Hero Section */}
-      <section className="relative pt-24 pb-32 bg-white dark:bg-slate-950 transition-colors">
+      <section className="relative pt-32 pb-40 transition-colors bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="inline-flex items-center space-x-2 bg-green-50 dark:bg-primary/10 text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-green-100 dark:border-primary/20 shadow-sm">
               <Zap className="w-3 h-3 fill-current" />
               <span>Verified for 2024 Fee Structure</span>
             </div>
-            <h1 className="text-5xl md:text-8xl font-black font-heading text-secondary dark:text-white mb-8 tracking-tighter leading-[0.9]">
+            <h1 className="text-6xl md:text-9xl font-black font-heading text-secondary dark:text-white mb-10 tracking-tighter leading-[0.85]">
               Scale Your Etsy <br />
-              <span className="text-primary italic relative">
+              <span className="text-primary italic relative inline-block">
                 Business
-                <span className="absolute -bottom-2 left-0 w-full h-3 bg-primary/10 -skew-x-12 -z-10"></span>
+                <span className="absolute -bottom-4 left-0 w-full h-4 bg-primary/20 -skew-x-12 -z-10 blur-sm"></span>
               </span>
-              <span className="text-secondary dark:text-white"> with Precision.</span>
+              <span className="text-secondary dark:text-white block md:inline"> with Precision.</span>
             </h1>
             <p className="max-w-2xl mx-auto text-xl text-gray-400 dark:text-gray-500 mb-12 font-medium leading-relaxed">
               Ditch the spreadsheets. Our professional calculator accounts for every sneaky fee, including regulatory costs and Offsite Ads protection.
@@ -50,12 +50,12 @@ const Landing: React.FC = () => {
       </section>
 
       {/* Features Grid */}
-      <section className="py-24 bg-gray-50/50 dark:bg-slate-900/50 relative">
+      <section className="py-32 relative bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-20">
-            <span className="text-primary font-black text-[10px] uppercase tracking-[0.3em] mb-4 block">Professional Grade</span>
-            <h2 className="text-4xl md:text-5xl font-black font-heading text-secondary dark:text-white mb-6 tracking-tight">Everything You Need to Scale</h2>
-            <div className="w-20 h-1.5 bg-primary mx-auto rounded-full"></div>
+          <div className="text-center mb-24">
+            <span className="text-primary font-black text-[12px] uppercase tracking-[0.5em] mb-4 block">Professional Grade</span>
+            <h2 className="text-4xl md:text-6xl font-black font-heading text-secondary dark:text-white mb-8 tracking-tighter">Everything to Scale.</h2>
+            <div className="w-24 h-2 bg-primary mx-auto rounded-full blur-[1px]"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
@@ -105,12 +105,12 @@ const Landing: React.FC = () => {
 };
 
 const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; description: string; accent: string }> = ({ icon, title, description, accent }) => (
-  <div className="bg-white dark:bg-slate-800 p-10 rounded-[32px] border border-gray-100 dark:border-slate-700 shadow-xl hover:shadow-2xl dark:hover:shadow-primary/5 hover:-translate-y-2 transition-all group">
-    <div className={`mb-8 p-5 rounded-2xl inline-block transition-transform group-hover:scale-110 group-hover:rotate-3 ${accent === 'green' ? 'bg-green-50 dark:bg-green-900/20' : accent === 'blue' ? 'bg-blue-50 dark:bg-blue-900/20' : 'bg-orange-50 dark:bg-orange-900/20'}`}>
-      {icon}
+  <div className="glass p-12 rounded-[56px] hover:scale-[1.02] transition-all duration-500 group">
+    <div className={`mb-10 p-6 rounded-[28px] inline-block transition-transform group-hover:scale-110 group-hover:rotate-6 ${accent === 'green' ? 'bg-green-50 dark:bg-green-500/10' : accent === 'blue' ? 'bg-blue-50 dark:bg-blue-500/10' : 'bg-orange-50 dark:bg-orange-500/10'}`}>
+      {React.isValidElement(icon) ? React.cloneElement(icon as any, { className: 'w-12 h-12' }) : icon}
     </div>
-    <h3 className="text-2xl font-black text-secondary dark:text-white mb-6 tracking-tight">{title}</h3>
-    <p className="text-gray-400 dark:text-gray-500 font-medium leading-relaxed">{description}</p>
+    <h3 className="text-3xl font-black text-secondary dark:text-white mb-6 tracking-tighter leading-tight">{title}</h3>
+    <p className="text-base text-gray-400 dark:text-gray-500 font-medium leading-relaxed">{description}</p>
   </div>
 );
 

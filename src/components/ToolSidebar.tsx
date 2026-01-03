@@ -49,27 +49,30 @@ export const ToolSidebar: React.FC = () => {
     ];
 
     return (
-        <div className="w-full lg:w-64 flex-shrink-0">
-            <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-gray-100 dark:border-slate-800 shadow-sm sticky top-24">
-                <h3 className="text-secondary dark:text-white font-black text-xs uppercase tracking-[0.2em] mb-6 pl-2">
+        <div className="w-full lg:w-80 flex-shrink-0 animate-in fade-in slide-in-from-left-4 duration-700">
+            <div className="glass p-8 rounded-[48px] sticky top-24 space-y-8">
+                <h3 className="text-secondary dark:text-white font-black text-xs uppercase tracking-[0.4em] mb-6 px-4">
                     Tool Suite
                 </h3>
-                <nav className="space-y-2">
+                <nav className="space-y-3">
                     {tools.map((tool) => {
                         const isActive = location.pathname === tool.path || (tool.path === '/etsy-profit-calculator' && location.pathname === '/calculator');
                         return (
                             <Link
                                 key={tool.path}
                                 to={tool.path}
-                                className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all group ${isActive
-                                    ? 'bg-primary text-white shadow-lg shadow-green-100/20'
-                                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-secondary dark:hover:text-white'
-                                    }`}
+                                className={`
+                                    group flex items-center space-x-4 px-6 py-4 rounded-[24px] text-sm font-black transition-all duration-300
+                                    ${isActive
+                                        ? 'bg-primary text-white shadow-xl shadow-green-500/20 translate-x-1'
+                                        : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-secondary dark:hover:text-white'
+                                    }
+                                `}
                             >
-                                <span className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-primary transition-colors'}>
+                                <div className={`${isActive ? 'scale-110' : 'group-hover:scale-110'} transition-transform duration-300`}>
                                     {tool.icon}
-                                </span>
-                                <span className="font-bold text-sm">{tool.name}</span>
+                                </div>
+                                <span className="tracking-wide">{tool.name}</span>
                             </Link>
                         );
                     })}

@@ -79,7 +79,7 @@ export const TrendHunter: React.FC<{ user: UserProfile | null }> = ({ user }) =>
                 </p>
             </div>
 
-            <div className="bg-white dark:bg-slate-900 p-2 rounded-[32px] border border-gray-100 dark:border-slate-800 shadow-xl flex items-center max-w-2xl mx-auto">
+            <div className="glass p-2 rounded-[40px] flex items-center max-w-2xl mx-auto backdrop-blur-3xl">
                 <div className="pl-6 pr-4">
                     <Search className="w-6 h-6 text-gray-300" />
                 </div>
@@ -94,7 +94,7 @@ export const TrendHunter: React.FC<{ user: UserProfile | null }> = ({ user }) =>
                 <button
                     onClick={handleHunt}
                     disabled={loading}
-                    className="bg-secondary dark:bg-primary text-white px-10 py-5 rounded-[28px] font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all disabled:opacity-50"
+                    className="bg-secondary dark:bg-primary text-white px-10 py-5 rounded-[32px] font-black uppercase tracking-widest text-xs hover:scale-105 active:scale-95 transition-all shadow-xl disabled:opacity-50"
                 >
                     {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Hunt Trends'}
                 </button>
@@ -109,13 +109,13 @@ export const TrendHunter: React.FC<{ user: UserProfile | null }> = ({ user }) =>
 
             {result && (
                 <div className="space-y-10 animate-in fade-in zoom-in-95 duration-500">
-                    <div className="bg-gradient-to-br from-secondary to-slate-900 p-10 rounded-[48px] text-white shadow-2xl relative overflow-hidden">
-                        <div className="absolute top-0 right-0 p-10 opacity-10">
-                            <BarChart3 className="w-40 h-40" />
+                    <div className="glass bg-secondary dark:bg-slate-950 p-12 rounded-[56px] text-white relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-12 opacity-5">
+                            <BarChart3 className="w-64 h-64" />
                         </div>
                         <div className="relative z-10">
-                            <h3 className="text-xs font-black text-primary uppercase tracking-[0.3em] mb-4">Market Summary</h3>
-                            <p className="text-xl font-medium leading-relaxed opacity-90">
+                            <h3 className="text-xs font-black text-primary uppercase tracking-[0.4em] mb-6">Market Insight</h3>
+                            <p className="text-2xl font-black leading-tight tracking-tight text-glow">
                                 {result.marketSummary}
                             </p>
                         </div>
@@ -123,12 +123,12 @@ export const TrendHunter: React.FC<{ user: UserProfile | null }> = ({ user }) =>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         {result.niches.map((niche, i) => (
-                            <div key={i} className="bg-white dark:bg-slate-900 p-8 rounded-[40px] border border-gray-100 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group">
-                                <div className="flex items-start justify-between mb-6">
-                                    <h4 className="text-2xl font-black text-secondary dark:text-white tracking-tight leading-tight pr-4">
+                            <div key={i} className="glass p-10 rounded-[48px] hover:scale-[1.02] transition-all duration-500 group">
+                                <div className="flex items-start justify-between mb-8">
+                                    <h4 className="text-3xl font-black text-secondary dark:text-white tracking-tighter leading-none pr-4">
                                         {niche.name}
                                     </h4>
-                                    <div className="px-3 py-1.5 bg-primary/10 text-primary rounded-xl text-xs font-black">
+                                    <div className="px-4 py-2 bg-primary/10 text-primary rounded-[16px] text-sm font-black text-glow">
                                         {niche.trendScore}%
                                     </div>
                                 </div>

@@ -137,10 +137,10 @@ const App: React.FC = () => {
   const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
   return (
-    <div className={`min-h-screen flex flex-col font-sans theme-transition ${isDarkMode ? 'dark' : ''}`}>
+    <div className={`min-h-screen flex flex-col font-sans theme-transition mesh-gradient ${isDarkMode ? 'dark bg-[#020617]' : 'bg-slate-50'}`}>
       <ScrollToTop />
       {/* Navigation */}
-      <nav className="bg-white dark:bg-slate-900 border-b border-gray-100 dark:border-slate-800 sticky top-0 z-50">
+      <nav className="glass sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-20 items-center">
             <div className="flex items-center">
@@ -148,8 +148,8 @@ const App: React.FC = () => {
                 <div className="bg-primary p-2.5 rounded-xl group-hover:rotate-6 transition-transform shadow-lg shadow-green-100/20">
                   <TrendingUp className="text-white w-6 h-6" />
                 </div>
-                <span className="text-2xl font-bold font-heading text-secondary dark:text-white tracking-tight">EtsyProfit<span className="text-primary">+</span></span>
-                <span className="text-[8px] font-black text-gray-300 dark:text-gray-600 self-end mb-1 ml-1 tracking-tighter">v2.5</span>
+                <span className="text-2xl font-black font-heading text-secondary dark:text-white tracking-tighter">EtsyProfit<span className="text-primary">+</span></span>
+                <span className="text-[10px] font-black text-primary/40 dark:text-gray-600 self-end mb-1.5 ml-1 tracking-tighter">v2.8</span>
               </Link>
               <div className="hidden lg:ml-10 lg:flex lg:space-x-8">
                 {navLinks.map(link => (

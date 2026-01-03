@@ -102,7 +102,7 @@ export const ListingOptimizer: React.FC<{ user: UserProfile | null }> = ({ user 
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Input Section */}
-                <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm space-y-6">
+                <div className="glass p-8 rounded-[40px] space-y-6">
                     <div>
                         <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Target Keyword (Optional)</label>
                         <div className="relative">
@@ -185,24 +185,25 @@ export const ListingOptimizer: React.FC<{ user: UserProfile | null }> = ({ user 
                 <div className="space-y-6">
                     {result ? (
                         <>
-                            <div className="bg-indigo-600 p-8 rounded-[32px] text-white shadow-xl relative overflow-hidden">
+                            <div className="glass bg-indigo-600 p-8 rounded-[40px] text-white relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl animate-pulse"></div>
                                 <div className="relative z-10 flex items-center justify-between">
                                     <div>
-                                        <div className="text-indigo-200 font-bold text-xs uppercase tracking-widest mb-1">SEO Score</div>
-                                        <div className="text-5xl font-black tracking-tighter">{result.seoScore}/100</div>
+                                        <div className="text-indigo-200 font-bold text-[10px] uppercase tracking-[0.2em] mb-1">SEO Blueprint</div>
+                                        <div className="text-6xl font-black tracking-tighter text-glow">{result.seoScore}<span className="text-xl opacity-30 ml-2">/100</span></div>
                                     </div>
-                                    <div className="p-4 bg-white/10 backdrop-blur-sm rounded-2xl">
-                                        <TrendingUp className="w-8 h-8 text-white" />
+                                    <div className="p-4 bg-white/10 backdrop-blur-xl rounded-[24px]">
+                                        <TrendingUp className="w-10 h-10 text-white" />
                                     </div>
                                 </div>
-                                <div className="mt-6 pt-6 border-t border-white/10">
-                                    <div className="text-sm text-indigo-100 font-medium leading-relaxed">
+                                <div className="mt-8 pt-8 border-t border-white/10">
+                                    <div className="text-sm text-indigo-100 font-medium leading-relaxed italic">
                                         "{result.critique}"
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm space-y-6">
+                            <div className="glass p-8 rounded-[40px] space-y-8">
                                 <div>
                                     <div className="flex items-center justify-between mb-2">
                                         <label className="text-xs font-black text-gray-400 uppercase tracking-widest">Optimized Title</label>

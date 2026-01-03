@@ -260,7 +260,7 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
             {/* Left Column: Inputs (1/3 width) */}
             <div className="xl:col-span-1 space-y-6" id="onboarding-inputs">
-              <section className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm sticky top-24">
+              <section className="glass p-8 rounded-[40px] sticky top-24">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-lg font-bold text-secondary dark:text-white">Listing Inputs</h2>
                   <button onClick={handleReset} className="text-gray-400 hover:text-red-500 transition-colors">
@@ -348,11 +348,11 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
             <div className="xl:col-span-2 space-y-8">
               {activeTool === 'fees' && (
                 <div className="space-y-8" id="onboarding-results">
-                  <section className="bg-secondary dark:bg-slate-950 p-10 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -mr-20 -mt-20 blur-3xl animate-pulse"></div>
+                  <section className="glass bg-secondary dark:bg-slate-950 p-10 rounded-[48px] text-white relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-primary/20 rounded-full -mr-20 -mt-20 blur-[100px] animate-pulse"></div>
                     <div className="relative z-10">
-                      <div className="flex items-center justify-between mb-8">
-                        <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em]">Advanced Profit Analytics</h2>
+                      <div className="flex items-center justify-between mb-10">
+                        <h2 className="text-xs font-black text-primary uppercase tracking-[0.4em]">Strategic Analytics</h2>
                         <button onClick={handleDownloadPDF} className="p-2 text-white/40 hover:text-white transition-colors"><Download className="w-5 h-5" /></button>
                       </div>
 
@@ -372,11 +372,11 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
                           </div>
 
                           {/* Key Metrics */}
-                          <div className="space-y-8">
+                          <div className="space-y-10">
                             <div>
                               <div className="flex items-baseline space-x-1">
                                 <span className="text-2xl font-black opacity-30">{symbol}</span>
-                                <div className="text-7xl font-black text-primary tracking-tighter">{results.netProfit.toFixed(2)}</div>
+                                <div className="text-8xl font-black text-primary tracking-tighter text-glow">{results.netProfit.toFixed(2)}</div>
                               </div>
                               <div className="text-sm font-bold opacity-40 uppercase tracking-widest mt-2 flex items-center">
                                 <ShieldCheck className="w-4 h-4 mr-2" />
@@ -390,11 +390,11 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
                                 <div className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">Net Margin</div>
                               </div>
                               <div>
-                                <div className={`inline-flex items-center px-3 py-1 rounded-full border text-[10px] font-black uppercase tracking-widest ${scoreData?.badge}`}>
-                                  <Sparkles className="w-3 h-3 mr-1.5" />
+                                <div className={`inline-flex items-center px-4 py-1.5 rounded-2xl border text-[10px] font-black uppercase tracking-[0.2em] ${scoreData?.badge}`}>
+                                  <Sparkles className="w-3.5 h-3.5 mr-2" />
                                   {scoreData?.label}
                                 </div>
-                                <div className="text-2xl font-black mt-2">{scoreData?.score} / 100</div>
+                                <div className={`text-4xl font-black mt-3 ${scoreData?.score && scoreData.score >= 70 ? 'text-glow' : ''}`}>{scoreData?.score}<span className="text-sm opacity-30 ml-1">/ 100</span></div>
                               </div>
                             </div>
                           </div>

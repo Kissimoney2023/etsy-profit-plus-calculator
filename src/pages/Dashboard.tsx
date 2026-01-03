@@ -233,25 +233,25 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
       </div>
 
       {/* Filters */}
-      <div className="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm mb-6 flex flex-col md:flex-row gap-4 justify-between items-center">
+      <div className="glass p-6 rounded-[32px] mb-8 flex flex-col md:flex-row gap-6 justify-between items-center">
         <div className="relative w-full md:w-96">
-          <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
           <input
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             placeholder="Search products or SKUs..."
-            className="w-full pl-10 pr-4 py-2 bg-gray-50 border-none rounded-xl focus:ring-1 focus:ring-primary outline-none"
+            className="w-full pl-12 pr-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-none rounded-2xl focus:ring-2 focus:ring-primary outline-none font-bold text-sm"
           />
         </div>
-        <div className="flex space-x-2 w-full md:w-auto">
-          <button className="flex-1 md:flex-none flex items-center justify-center space-x-2 px-4 py-2 border border-gray-100 rounded-xl text-sm font-semibold text-gray-600 hover:bg-gray-50">
+        <div className="flex space-x-3 w-full md:w-auto">
+          <button className="flex-1 md:flex-none flex items-center justify-center space-x-3 px-6 py-3 border border-gray-100 dark:border-slate-800 rounded-2xl text-xs font-black text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-800 uppercase tracking-widest transition-all">
             <Filter className="w-4 h-4" />
             <span>Filters</span>
           </button>
           <button
             onClick={handleExportCSV}
-            className="flex-1 md:flex-none px-4 py-2 bg-secondary text-white rounded-xl text-sm font-semibold hover:bg-opacity-90 active:scale-95 transition-all"
+            className="flex-1 md:flex-none px-8 py-3 bg-secondary dark:bg-primary text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-lg"
           >
             Export CSV
           </button>
@@ -259,7 +259,7 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-3xl border border-gray-100 shadow-xl overflow-hidden min-h-[300px]">
+      <div className="glass rounded-[48px] overflow-hidden min-h-[300px]">
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-gray-50 border-b border-gray-100">
@@ -333,13 +333,15 @@ const ProductRow: React.FC<{ product: Product; onDelete: (id: string) => void | 
 };
 
 const StatCard: React.FC<{ title: string; value: string; icon: React.ReactNode }> = ({ title, value, icon }) => (
-  <div className="bg-white p-6 rounded-3xl border border-gray-100 shadow-sm flex items-center space-x-4">
-    <div className="p-3 bg-gray-50 rounded-2xl">
-      {React.isValidElement(icon) ? React.cloneElement(icon as any, { className: 'w-8 h-8' }) : icon}
+  <div className="glass p-8 rounded-[40px] flex items-center space-x-6 group hover:-translate-y-1 transition-all duration-300">
+    <div className="p-4 bg-primary/5 dark:bg-white/5 rounded-[24px] group-hover:scale-110 group-hover:bg-primary/10 transition-all duration-500">
+      {React.isValidElement(icon) ? React.cloneElement(icon as any, {
+        className: `w-10 h-10 ${title === 'Avg. Margin' ? 'floating' : ''}`
+      }) : icon}
     </div>
     <div>
-      <h3 className="text-gray-400 text-xs font-black uppercase tracking-widest">{title}</h3>
-      <p className="text-2xl font-black text-secondary">{value}</p>
+      <h3 className="text-gray-400 dark:text-gray-400 text-[10px] font-black uppercase tracking-[0.2em] mb-1">{title}</h3>
+      <p className="text-3xl font-black text-secondary dark:text-white tracking-tight">{value}</p>
     </div>
   </div>
 );
