@@ -1,4 +1,6 @@
 
+import { POST_1_CONTENT } from './blog-content-expanded';
+
 export interface BlogPostData {
   title: string;
   slug: string;
@@ -21,12 +23,12 @@ export const BLOG_POSTS: BlogPostData[] = [
     description: "Don't let hidden fees eat your profits. A complete breakdown of listing, transaction, payment processing, and regulatory fees for Etsy sellers in 2024.",
     category: "Guides",
     date: "Jan 03, 2025",
-    readingTime: "8 min read",
+    readingTime: "12 min read",
     keywords: ["etsy fees", "fee calculator", "selling on etsy", "etsy transaction fee"],
     image: "/blog-images/etsy-fees-breakdown.png",
     imageAlt: "2024 Etsy Fee Structure Breakdown - Visual guide showing listing, transaction, payment processing, and offsite ads fees",
     author: "EtsyProfit+ Team",
-    content: `<div class="mb-8"><img src="/blog-images/etsy-fees-breakdown.png" alt="2024 Etsy Fee Structure Breakdown" class="w-full rounded-2xl shadow-lg mb-4" /><p class="text-sm text-gray-500 text-center italic">Complete breakdown of all Etsy seller fees in 2024</p></div><h2>Why You Need More Than Just 'Napkin Math'</h2><p>Many new Etsy sellers make a critical mistake: they calculate profit by simply subtracting the cost of their item from the sale price. "I bought this mug for $5 and sold it for $25, so I made $20!" Unfortunately, it's never that simple.</p><p>Etsy's fee structure is layered, and small percentages add up to a significant portion of your revenue. In 2024/2025, understanding these layers is the difference between a hobby and a business.</p><h3>1. The Listing Fee</h3><p><strong>Cost: $0.20 USD per item.</strong></p><p>This is the "rent" you pay for space on Etsy's shelf. You pay this when you create a listing, and it renews every 4 months or whenever the item sells.</p><h3>2. The Transaction Fee</h3><p><strong>Cost: 6.5% of the total order amount.</strong></p><p>This is the commission Etsy takes for facilitating the sale. Crucially, <strong>this applies to the shipping cost you charge the customer as well</strong>. If you sell an item for $20 and charge $5 shipping, you pay 6.5% on $25, not $20.</p><h3>3. Payment Processing Fee</h3><p><strong>Cost (USA): 3% + $0.25 USD.</strong></p><p>This fee pays for the credit card processing. It varies significantly by country. For example, in the UK it's 4% + £0.20.</p><h3>4. Offsite Ads</h3><p><strong>Cost: 12% or 15% (if a sale comes from an ad).</strong></p><p>If Etsy advertises your item on Google or Facebook and it sells, you pay this fee. If you made under $10k in the last 365 days, it's 15% (and optional). If you made over $10k, it's 12% (and mandatory).</p><div class="bg-indigo-50 border-l-4 border-indigo-500 p-6 my-8 rounded-r-xl"><h4 class="font-bold text-indigo-900 mb-2">Real World Example</h4><p class="text-sm text-indigo-800">You sell a handmade ring for <strong>$50.00</strong> + <strong>$5.00 shipping</strong>.<br/><strong>Total Revenue: $55.00</strong></p><ul class="list-disc pl-5 mt-2 text-sm text-indigo-800 space-y-1"><li>Listing Fee: -$0.20</li><li>Transaction Fee (6.5% of $55): -$3.58</li><li>Payment Proc. (3% of $55 + $0.25): -$1.90</li><li><strong>Total Fees: $5.68 (approx 10% of revenue)</strong></li></ul><p class="mt-4 font-bold text-indigo-900">Net Revenue: $49.32</p></div><p>Use our <a href="/calculator" class="text-primary font-bold hover:underline">Free Etsy Fee Calculator</a> to plug in your own numbers and see exactly what you'll keep.</p>`,
+    content: POST_1_CONTENT,
     faqs: [
       { q: "Does Etsy charge fees on shipping?", a: "Yes, the 6.5% Transaction Fee applies to the shipping amount you charge the customer." },
       { q: "Can I opt out of Offsite Ads?", a: "Only if your shop has earned less than $10,000 USD in the past 365 days. Once you cross that threshold, you are required to participate for the lifetime of your shop, though the fee drops to 12%." }
