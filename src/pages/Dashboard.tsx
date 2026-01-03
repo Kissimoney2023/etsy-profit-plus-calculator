@@ -20,11 +20,16 @@ import { supabase } from '../lib/supabase';
 import { calculateEtsyProfit } from '../lib/calculator';
 
 import { SEO } from '../components/SEO';
+import { BulkImport } from '../components/BulkImport';
+import { InventoryTrendChart } from '../components/InventoryTrendChart';
+import { X } from 'lucide-react';
 
 const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+
   useEffect(() => {
     fetchProducts();
   }, [user]);
@@ -79,6 +84,47 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
       setProducts(prev => prev.filter(p => p.id !== productId));
     } catch (error) {
       console.error('Error deleting:', error);
+    }
+  };
+
+  const handleBulkImport = async (importedProducts: any[]) => {
+    try {
+      if (user) {
+        const { data, error } = await supabase.from('products').insert(
+          importedProducts.map(p => ({
+            user_id: user.id,
+            title: p.sku || 'Untitled Product',
+            sku: p.sku,
+            currency: p.currency,
+            inputs: p as any
+          }))
+        ).select();
+
+        if (error) throw error;
+        if (data) {
+          setProducts(prev => [...data, ...prev]);
+        }
+      } else {
+        const newProducts = importedProducts.map(p => ({
+          id: crypto.randomUUID(),
+          user_id: 'guest',
+          title: p.sku || 'Untitled Product',
+          sku: p.sku,
+          currency: p.currency,
+          inputs: p,
+          created_at: new Date().toISOString()
+        }));
+
+        const saved = localStorage.getItem('etsy_saved_products');
+        const parsed = saved ? JSON.parse(saved) : [];
+        const updated = [...newProducts.map(p => p.inputs), ...parsed];
+        localStorage.setItem('etsy_saved_products', JSON.stringify(updated));
+
+        setProducts(prev => [...newProducts, ...prev]);
+      }
+      setIsImportModalOpen(false);
+    } catch (err) {
+      console.error('Error during bulk import:', err);
     }
   };
 
@@ -139,17 +185,51 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
           </h1>
           <p className="text-gray-500 mt-1">Manage your saved calculations and product pricing.</p>
         </div>
-        <Link to="/calculator" className="bg-primary text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-green-100 flex items-center space-x-2 hover:bg-opacity-90 transition-all">
-          <Plus className="w-5 h-5" />
-          <span>New Calculation</span>
-        </Link>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setIsImportModalOpen(true)}
+            className="bg-white dark:bg-slate-900 text-secondary dark:text-white px-6 py-3 rounded-xl font-bold border border-gray-100 dark:border-slate-800 hover:bg-gray-50 transition-all"
+          >
+            Bulk Import Shop
+          </button>
+          <Link to="/calculator" className="bg-primary text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-green-100 flex items-center space-x-2 hover:bg-opacity-90 transition-all">
+            <Plus className="w-5 h-5" />
+            <span>New Calculation</span>
+          </Link>
+        </div>
       </div>
 
+      {isImportModalOpen && (
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+          <div className="bg-white dark:bg-slate-900 w-full max-w-xl rounded-[40px] shadow-2xl overflow-hidden animate-in zoom-in-95 duration-300">
+            <div className="p-8 border-b border-gray-100 dark:border-slate-800 flex items-center justify-between">
+              <div>
+                <h3 className="text-xl font-black text-secondary dark:text-white">Bulk Shop Analysis</h3>
+                <p className="text-xs font-medium text-gray-400">Upload your Etsy Listings CSV</p>
+              </div>
+              <button
+                onClick={() => setIsImportModalOpen(false)}
+                className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            <div className="p-8">
+              <BulkImport onImport={handleBulkImport} />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Stats Bar */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <StatCard title="Total Products" value={totalProducts.toString()} icon={<Box className="text-blue-500" />} />
         <StatCard title="Avg. Margin" value={avgMargin} icon={<TrendingUp className="text-primary" />} />
         <StatCard title="Est. Monthly Profit" value={`$${estMonthlyProfit}`} icon={<FileText className="text-orange-500" />} />
+      </div>
+
+      <div className="mb-12">
+        <InventoryTrendChart products={products} />
       </div>
 
       {/* Filters */}

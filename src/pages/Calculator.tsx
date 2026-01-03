@@ -32,6 +32,7 @@ import { AdsScenarioTool } from '../components/AdsScenarioTool';
 import { ProfitChart } from '../components/ProfitChart';
 import { OnboardingTour } from '../components/OnboardingTour';
 import { TrendHunter } from '../components/TrendHunter';
+import { MultiRegionTool } from '../components/MultiRegionTool';
 
 declare global {
   interface Window {
@@ -209,6 +210,7 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
       case 'ads': return 'Etsy Ads Fee Calculator';
       case 'breakeven': return 'Etsy Break-Even Calculator';
       case 'trend': return 'Etsy AI Trend Hunter';
+      case 'region': return 'Etsy Multi-Region Pricing Strategy';
       default: return 'Etsy Profit & Fee Calculator';
     }
   };
@@ -240,8 +242,9 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
                 activeTool === 'breakeven' ? 'Break-Even Calculator' :
                   activeTool === 'ads' ? 'Offsite Ads Analytics' :
                     activeTool === 'trend' ? 'AI Trend Hunter' :
-                      activeTool === 'profit' ? 'Profit Strategy Analyzer' :
-                        'Etsy Fee Calculator'}
+                      activeTool === 'region' ? 'Multi-Region Strategy' :
+                        activeTool === 'profit' ? 'Profit Strategy Analyzer' :
+                          'Etsy Fee Calculator'}
           </h1>
         </div>
 
@@ -251,6 +254,8 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
           <CompetitorCompare inputs={inputs} user={user} />
         ) : activeTool === 'trend' ? (
           <TrendHunter user={user} />
+        ) : activeTool === 'region' ? (
+          <MultiRegionTool inputs={inputs} />
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
             {/* Left Column: Inputs (1/3 width) */}

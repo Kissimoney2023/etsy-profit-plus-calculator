@@ -261,6 +261,7 @@ const App: React.FC = () => {
           <Route path="/etsy-listing-optimizer" element={<CalculatorPage user={user} toolType="optimizer" />} />
           <Route path="/etsy-competitor-compare" element={<CalculatorPage user={user} toolType="compare" />} />
           <Route path="/etsy-trend-hunter" element={<CalculatorPage user={user} toolType="trend" />} />
+          <Route path="/etsy-multi-region-strategy" element={<CalculatorPage user={user} toolType="region" />} />
           <Route path="/blog" element={<BlogListing />} />
           <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/about" element={<About />} />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Calculator, TrendingUp, Target, Megaphone, Sparkles, Swords, Search } from 'lucide-react';
+import { Calculator, TrendingUp, Target, Megaphone, Sparkles, Swords, Search, Globe } from 'lucide-react';
 
 export const ToolSidebar: React.FC = () => {
     const location = useLocation();
@@ -40,6 +40,11 @@ export const ToolSidebar: React.FC = () => {
             name: 'AI Trend Hunter',
             path: '/etsy-trend-hunter',
             icon: <Search className="w-5 h-5" />
+        },
+        {
+            name: 'Multi-Region Strategy',
+            path: '/etsy-multi-region-strategy',
+            icon: <Globe className="w-5 h-5" />
         }
     ];
 
