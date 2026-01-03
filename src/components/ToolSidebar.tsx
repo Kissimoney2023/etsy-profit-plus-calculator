@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Calculator, TrendingUp, Target, Megaphone } from 'lucide-react';
+import { Calculator, TrendingUp, Target, Megaphone, Sparkles, Swords } from 'lucide-react';
 
 export const ToolSidebar: React.FC = () => {
     const location = useLocation();
@@ -25,6 +25,16 @@ export const ToolSidebar: React.FC = () => {
             name: 'Ads Scenario Tool',
             path: '/etsy-offsite-ads-fee-calculator',
             icon: <Megaphone className="w-5 h-5" />
+        },
+        {
+            name: 'AI Listing Optimizer',
+            path: '/etsy-listing-optimizer',
+            icon: <Sparkles className="w-5 h-5" />
+        },
+        {
+            name: 'Competitor Compare',
+            path: '/etsy-competitor-compare',
+            icon: <Swords className="w-5 h-5" />
         }
     ];
 
@@ -42,8 +52,8 @@ export const ToolSidebar: React.FC = () => {
                                 key={tool.path}
                                 to={tool.path}
                                 className={`flex items-center space-x-3 px-4 py-3 rounded-xl transition-all group ${isActive
-                                        ? 'bg-primary text-white shadow-lg shadow-green-100/20'
-                                        : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-secondary dark:hover:text-white'
+                                    ? 'bg-primary text-white shadow-lg shadow-green-100/20'
+                                    : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-secondary dark:hover:text-white'
                                     }`}
                             >
                                 <span className={isActive ? 'text-white' : 'text-gray-400 group-hover:text-primary transition-colors'}>

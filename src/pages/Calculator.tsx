@@ -12,7 +12,8 @@ import {
   Loader2,
   Tag,
   RotateCcw,
-  HelpCircle
+  HelpCircle,
+  Download
 } from 'lucide-react';
 import { ToolSidebar } from '../components/ToolSidebar';
 import { CalculatorInputs, CalculationResult, UserProfile, CurrencyCode } from '../types';
@@ -21,6 +22,14 @@ import { supabase } from '../lib/supabase';
 import { CURRENCIES, getCurrencyDetails, formatCurrency, convertCurrency } from '../lib/currency';
 import { COUNTRY_PRESETS, CountryPreset } from '../lib/countries';
 import { canPerformCalculation, recordCalculationUsage } from '../lib/usage';
+import { ListingOptimizer } from '../components/ListingOptimizer';
+import { CompetitorCompare } from '../components/CompetitorCompare';
+
+declare global {
+  interface Window {
+    html2pdf: any;
+  }
+}
 
 const DEFAULT_INPUTS: CalculatorInputs = {
   sku: '',
@@ -282,6 +291,28 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
     }
   };
 
+  const handleDownloadPDF = () => {
+    if (!results) return;
+    const element = document.getElementById('calculator-report');
+    if (!element) return;
+
+    // Simplify view for PDF? Or just print as is.
+    const opt = {
+      margin: 1,
+      filename: `etsy-calc-${inputs.sku || 'report'}.pdf`,
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+
+    // Check if script loaded
+    if (window.html2pdf) {
+      window.html2pdf().set(opt).from(element).save();
+    } else {
+      alert('PDF generator library not loaded yet. Please refresh.');
+    }
+  };
+
   const handleReset = () => {
     if (confirm('Clear all inputs? This draft will be lost.')) {
       setInputs(DEFAULT_INPUTS);
@@ -290,7 +321,7 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative flex flex-col lg:flex-row gap-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 relative flex flex-col lg:flex-row gap-8" id="calculator-report">
       <ToolSidebar />
 
       <div className="flex-grow min-w-0">
@@ -318,18 +349,34 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
               <span>Etsy Seller Toolkit</span>
             </div>
             <h1 className="text-3xl md:text-5xl font-black text-secondary dark:text-white tracking-tighter">
-              {activeTool === 'fees' ? 'Fee Calculator' : activeTool === 'breakeven' ? 'Break-Even Tool' : activeTool === 'ads' ? 'Ads Scenario Tool' : 'Profit Analyzer'}
+              {activeTool === 'fees' ? 'Fee Calculator'
+                : activeTool === 'breakeven' ? 'Break-Even Tool'
+                  : activeTool === 'ads' ? 'Ads Scenario Tool'
+                    : activeTool === 'optimizer' ? 'Listing Optimizer'
+                      : activeTool === 'compare' ? 'Competitor Compare'
+                        : 'Profit Analyzer'}
             </h1>
             <p className="text-gray-500 mt-2 font-medium">
               {activeTool === 'breakeven'
                 ? 'Find the minimum price you need to charge to cover all costs.'
                 : activeTool === 'ads'
                   ? 'Calculate how Offsite Ads fees impact your margins.'
-                  : 'Analyze your profit margins and fees with precision.'}
+                  : activeTool === 'optimizer'
+                    ? 'Use AI to generate high-ranking titles and tags.'
+                    : activeTool === 'compare'
+                      ? 'Side-by-side comparison with competitor pricing.'
+                      : 'Analyze your profit margins and fees with precision.'}
             </p>
           </div>
         </div>
 
+      </div>
+
+      {activeTool === 'optimizer' ? (
+        <ListingOptimizer user={user} />
+      ) : activeTool === 'compare' ? (
+        <CompetitorCompare inputs={inputs} user={user} />
+      ) : (
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
           <div className="space-y-8">
             <section className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm">
@@ -482,6 +529,14 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
 
             <div className="flex gap-4">
               <button
+                onClick={handleDownloadPDF}
+                className="px-4 py-4 bg-white dark:bg-slate-800 text-gray-500 hover:text-primary rounded-2xl font-bold uppercase tracking-widest text-xs flex items-center justify-center space-x-2 shadow-sm transition-all"
+                title="Download PDF Scenarios"
+              >
+                <Download className="w-5 h-5" />
+                <span>PDF</span>
+              </button>
+              <button
                 onClick={handleSave}
                 disabled={isSaving}
                 className="flex-1 bg-primary text-white py-4 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center justify-center space-x-2 shadow-lg hover:bg-opacity-90 transition-all"
@@ -499,8 +554,9 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
             </div>
           </div>
         </div>
-      </div >
-    </div >
+      )}
+    </div>
+  </div >
   );
 };
 
