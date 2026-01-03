@@ -1,16 +1,16 @@
 
+
 import React, { useState } from 'react';
 import { CalculatorInputs, CalculationResult, CurrencyCode, UserProfile } from '../types';
 import { calculateEtsyProfit } from '../lib/calculator';
 import { formatCurrency, getCurrencySymbol } from '../lib/currency';
 import { RefreshCw, TrendingUp, TrendingDown, Swords } from 'lucide-react';
+import { UpgradeWall } from './UpgradeWall';
 
 interface ScenarioProps {
     inputs: CalculatorInputs;
     user: UserProfile | null;
 }
-
-import { UpgradeWall } from './UpgradeWall';
 
 export const CompetitorCompare: React.FC<ScenarioProps> = ({ inputs: initialInputs, user }) => {
     if (!user || user.plan !== 'pro') {

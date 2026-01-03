@@ -1,8 +1,10 @@
 
+
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { Loader2, Sparkles, AlertCircle, CheckCircle2, TrendingUp, Search } from 'lucide-react';
 import { UserProfile } from '../types';
+import { UpgradeWall } from './UpgradeWall';
 
 interface OptimizerResult {
     optimizedTitle: string;
@@ -10,8 +12,6 @@ interface OptimizerResult {
     critique: string;
     seoScore: number;
 }
-
-import { UpgradeWall } from './UpgradeWall';
 
 export const ListingOptimizer: React.FC<{ user: UserProfile | null }> = ({ user }) => {
     const [title, setTitle] = useState('');
