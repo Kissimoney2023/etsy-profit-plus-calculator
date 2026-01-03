@@ -23,7 +23,8 @@ export const CURRENCIES: { code: CurrencyCode; symbol: string; name: string }[] 
 
 // Predefined exchange rates with USD as the base (1 USD = X Currency)
 // Approximate 2024 market values
-export const EXCHANGE_RATES: Record<CurrencyCode, number> = {
+// Default/Fallback rates (Approximate 2024)
+export let EXCHANGE_RATES: Record<CurrencyCode, number> = {
   USD: 1,
   EUR: 0.92,
   GBP: 0.79,
@@ -42,6 +43,46 @@ export const EXCHANGE_RATES: Record<CurrencyCode, number> = {
   ILS: 3.65,
   BRL: 5.05,
   CZK: 23.40,
+};
+
+const RATES_STORAGE_KEY = 'etsy_exchange_rates';
+const RATES_TIMESTAMP_KEY = 'etsy_rates_timestamp';
+
+export const fetchExchangeRates = async () => {
+  try {
+    // Check cache (valid for 24h)
+    const cached = localStorage.getItem(RATES_STORAGE_KEY);
+    const timestamp = localStorage.getItem(RATES_TIMESTAMP_KEY);
+    const now = Date.now();
+
+    if (cached && timestamp && (now - Number(timestamp) < 24 * 60 * 60 * 1000)) {
+      EXCHANGE_RATES = { ...EXCHANGE_RATES, ...JSON.parse(cached) };
+      console.log('Using cached exchange rates');
+      return;
+    }
+
+    console.log('Fetching live exchange rates...');
+    const res = await fetch('https://open.er-api.com/v6/latest/USD');
+    const data = await res.json();
+
+    if (data && data.rates) {
+      // Filter only supported codes to keep object clean
+      const newRates: Partial<Record<CurrencyCode, number>> = {};
+      Object.keys(EXCHANGE_RATES).forEach(key => {
+        const code = key as CurrencyCode;
+        if (data.rates[code]) {
+          newRates[code] = data.rates[code];
+        }
+      });
+
+      // Update memory and cache
+      EXCHANGE_RATES = { ...EXCHANGE_RATES, ...newRates };
+      localStorage.setItem(RATES_STORAGE_KEY, JSON.stringify(newRates));
+      localStorage.setItem(RATES_TIMESTAMP_KEY, now.toString());
+    }
+  } catch (error) {
+    console.error('Failed to fetch exchange rates:', error);
+  }
 };
 
 /**
@@ -74,7 +115,7 @@ export const convertCurrency = (amount: number, from: string, to: string): numbe
   const toCode = to as CurrencyCode;
 
   if (fromCode === toCode) return amount;
-  
+
   // Convert to USD base first
   const inUSD = amount / EXCHANGE_RATES[fromCode];
   // Convert from USD base to target
@@ -90,7 +131,7 @@ export const getCurrencySymbol = (code: string): string => {
 
 export const formatCurrency = (value: number, code: string): string => {
   const validCode = isValidCurrencyCode(code) ? code : 'USD';
-  
+
   try {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',

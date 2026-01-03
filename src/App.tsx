@@ -34,6 +34,7 @@ import { UserProfile } from './types';
 
 import { supabase } from './lib/supabase';
 import { Session } from '@supabase/supabase-js';
+import { fetchExchangeRates } from './lib/currency';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -67,6 +68,9 @@ const App: React.FC = () => {
       setSession(session);
       if (session) fetchProfile(session.user.id);
     });
+
+    // Fetch dynamic exchange rates
+    fetchExchangeRates();
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);

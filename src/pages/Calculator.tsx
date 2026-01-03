@@ -19,6 +19,7 @@ import { CalculatorInputs, CalculationResult, UserProfile, CurrencyCode } from '
 import { calculateEtsyProfit } from '../lib/calculator';
 import { supabase } from '../lib/supabase';
 import { CURRENCIES, getCurrencyDetails, formatCurrency, convertCurrency } from '../lib/currency';
+import { COUNTRY_PRESETS, CountryPreset } from '../lib/countries';
 import { canPerformCalculation, recordCalculationUsage } from '../lib/usage';
 
 const DEFAULT_INPUTS: CalculatorInputs = {
@@ -89,6 +90,17 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
   const [saveMessage, setSaveMessage] = useState('');
   const [usageError, setUsageError] = useState('');
   const [skuError, setSkuError] = useState('');
+  const [selectedCountry, setSelectedCountry] = useState<CountryPreset['id']>('US');
+
+  // Sync country selection with inputs if loaded from save
+  useEffect(() => {
+    if (activeTool && inputs.currency) {
+      // Attempt to find matching country or default to 'Global'
+      const match = COUNTRY_PRESETS.find(c => c.currency === inputs.currency && c.regulatoryFee === inputs.regulatoryFeePercent);
+      if (match) setSelectedCountry(match.id);
+      else setSelectedCountry('Global');
+    }
+  }, [idParam]);
 
   const currencyInfo = useMemo(() => getCurrencyDetails(inputs.currency), [inputs.currency]);
   const { symbol, name: currencyName } = currencyInfo;
@@ -166,6 +178,13 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
   const handleCurrencyChange = (newCurrency: CurrencyCode) => {
     const oldCurrency = inputs.currency;
     if (oldCurrency === newCurrency) return;
+
+    // Check if this currency belongs to a specific country preset, otherwise Global
+    const preset = COUNTRY_PRESETS.find(c => c.currency === newCurrency && c.id === selectedCountry);
+    if (!preset) {
+      setSelectedCountry('Global');
+    }
+
     setInputs(prev => {
       const next = { ...prev, currency: newCurrency };
       const moneyKeys = ['itemPrice', 'cogs', 'packagingCost', 'shippingCost', 'shippingCharged', 'listingFee', 'processingFeeFixed'] as const;
@@ -175,6 +194,24 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
       });
       return next;
     });
+  };
+
+  const handleCountryChange = (countryId: string) => {
+    setSelectedCountry(countryId);
+    const preset = COUNTRY_PRESETS.find(c => c.id === countryId);
+    if (preset) {
+      // If currency changes, convert values
+      if (preset.currency !== inputs.currency) {
+        handleCurrencyChange(preset.currency);
+      }
+      // Update fees
+      setInputs(prev => ({
+        ...prev,
+        regulatoryFeePercent: preset.regulatoryFee,
+        // Update listing fee (approx 0.20 USD converted)
+        listingFee: Math.round(convertCurrency(0.20, 'USD', preset.currency) * 100) / 100
+      }));
+    }
   };
 
   const handleSave = async () => {
@@ -300,19 +337,118 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
                 <Tag className="w-5 h-5 mr-3 text-primary" />
                 Listing Information
               </h2>
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Product SKU / Title</label>
-                  <input
-                    type="text"
-                    value={inputs.sku}
-                    onChange={(e) => handleChange('sku', e.target.value)}
-                    placeholder="e.g. Handmade Mug"
-                    className={`w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary font-bold ${skuError ? 'ring-2 ring-red-500' : ''}`}
-                  />
-                  {skuError && <p className="text-red-500 text-[10px] mt-1 font-bold uppercase tracking-widest">{skuError}</p>}
+                  <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Seller Location</label>
+                  <select
+                    value={selectedCountry}
+                    onChange={(e) => handleCountryChange(e.target.value)}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary font-bold text-secondary dark:text-white appearance-none cursor-pointer"
+                  >
+                    {COUNTRY_PRESETS.map(c => (
+                      <option key={c.id} value={c.id}>{c.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Currency</label>
+                  <select
+                    value={inputs.currency}
+                    onChange={(e) => handleCurrencyChange(e.target.value as CurrencyCode)}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary font-bold text-secondary dark:text-white appearance-none cursor-pointer"
+                  >
+                    {CURRENCIES.map(c => (
+                      <option key={c.code} value={c.code}>{c.code} ({c.symbol}) - {c.name}</option>
+                    ))}
+                  </select>
                 </div>
               </div>
+
+              <div>
+                <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Product SKU / Title</label>
+                <input
+                  type="text"
+                  value={inputs.sku}
+                  onChange={(e) => handleChange('sku', e.target.value)}
+                  placeholder="e.g. Handmade Mug"
+                  className={`w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary font-bold text-secondary dark:text-white ${skuError ? 'ring-2 ring-red-500' : ''}`}
+                />
+                {skuError && <p className="text-red-500 text-[10px] mt-1 font-bold uppercase tracking-widest">{skuError}</p>}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4">
+                <div>
+                  <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Item Price ({symbol})</label>
+                  <input
+                    type="number"
+                    value={inputs.itemPrice}
+                    onChange={(e) => handleChange('itemPrice', parseFloat(e.target.value) || 0)}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary font-bold text-secondary dark:text-white"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Shipping Charged ({symbol})</label>
+                  <input
+                    type="number"
+                    value={inputs.shippingCharged}
+                    onChange={(e) => handleChange('shippingCharged', parseFloat(e.target.value) || 0)}
+                    className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary font-bold text-secondary dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-100 dark:border-slate-800">
+                <h3 className="text-sm font-bold mb-4 text-secondary dark:text-white">Costs & Expenses</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Item Cost (COGS)</label>
+                    <input
+                      type="number"
+                      value={inputs.cogs}
+                      onChange={(e) => handleChange('cogs', parseFloat(e.target.value) || 0)}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary font-bold text-secondary dark:text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Shipping Cost to You</label>
+                    <input
+                      type="number"
+                      value={inputs.shippingCost}
+                      onChange={(e) => handleChange('shippingCost', parseFloat(e.target.value) || 0)}
+                      className="w-full px-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl outline-none focus:ring-2 focus:ring-primary font-bold text-secondary dark:text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-100 dark:border-slate-800">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-secondary dark:text-white">Fee Settings</h3>
+                  {activeTool === 'ads' && <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded font-bold">Ads Mode Active</span>}
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-800 rounded-xl">
+                    <span className="text-sm font-medium">Offsite Ads (12-15%)</span>
+                    <div
+                      className={`w-12 h-6 rounded-full p-1 cursor-pointer transition-colors ${inputs.offsiteAdsEnabled ? 'bg-primary' : 'bg-gray-300'}`}
+                      onClick={() => handleChange('offsiteAdsEnabled', !inputs.offsiteAdsEnabled)}
+                    >
+                      <div className={`w-4 h-4 bg-white rounded-full shadow-sm transition-transform ${inputs.offsiteAdsEnabled ? 'translate-x-6' : 'translate-x-0'}`} />
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-slate-800 rounded-xl">
+                    <span className="text-sm font-medium">Regulatory Fee (%)</span>
+                    <input
+                      type="number"
+                      value={inputs.regulatoryFeePercent}
+                      onChange={(e) => handleChange('regulatoryFeePercent', parseFloat(e.target.value) || 0)}
+                      className="w-20 px-2 py-1 bg-white dark:bg-slate-900 rounded outline-none text-right font-bold"
+                    />
+                  </div>
+                </div>
+              </div>
+
             </section>
           </div>
 
@@ -363,8 +499,8 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </div >
+    </div >
   );
 };
 
