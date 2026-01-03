@@ -220,112 +220,177 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
 
         <div className="mb-8">
           <h1 className="text-3xl font-black text-secondary dark:text-white">
-            {activeTool === 'optimizer' ? 'Listing Optimizer' : activeTool === 'compare' ? 'Competitor Compare' : 'Profit Calculator'}
+            {activeTool === 'optimizer' ? 'Listing Optimizer AI' :
+              activeTool === 'compare' ? 'Competitor Compare' :
+                activeTool === 'breakeven' ? 'Break-Even Calculator' :
+                  activeTool === 'ads' ? 'Offsite Ads Analytics' :
+                    activeTool === 'profit' ? 'Profit Strategy Analyzer' :
+                      'Etsy Fee Calculator'}
           </h1>
         </div>
 
-        {activeTool === 'optimizer' && <ListingOptimizer user={user} />}
-        {activeTool === 'compare' && <CompetitorCompare inputs={inputs} user={user} />}
-
-        {activeTool !== 'optimizer' && activeTool !== 'compare' && (
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            {/* Left Column: Inputs */}
-            <div className="space-y-8">
-              <section className="bg-white dark:bg-slate-900 p-8 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm">
-                <h2 className="text-xl font-bold mb-6 text-secondary dark:text-white">Listing Details</h2>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Location</label>
-                    <select value={selectedCountry} onChange={(e) => handleCountryChange(e.target.value)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold">
-                      {COUNTRY_PRESETS.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Currency</label>
-                    <select value={inputs.currency} onChange={(e) => handleCurrencyChange(e.target.value as CurrencyCode)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold">
-                      {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
-                    </select>
-                  </div>
+        {activeTool === 'optimizer' ? (
+          <ListingOptimizer user={user} />
+        ) : activeTool === 'compare' ? (
+          <CompetitorCompare inputs={inputs} user={user} />
+        ) : (
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+            {/* Left Column: Inputs (1/3 width) */}
+            <div className="xl:col-span-1 space-y-6">
+              <section className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-gray-100 dark:border-slate-800 shadow-sm sticky top-24">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-lg font-bold text-secondary dark:text-white">Listing Inputs</h2>
+                  <button onClick={handleReset} className="text-gray-400 hover:text-red-500 transition-colors">
+                    <RotateCcw className="w-4 h-4" />
+                  </button>
                 </div>
 
-                <div className="mb-4">
-                  <label className="block text-xs font-bold text-gray-400 uppercase mb-1">SKU / Title</label>
-                  <input
-                    type="text"
-                    value={inputs.sku}
-                    onChange={(e) => handleChange('sku', e.target.value)}
-                    className={`w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold ${skuError ? 'ring-2 ring-red-500' : ''}`}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-                  <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Item Price</label>
-                    <input type="number" value={inputs.itemPrice} onChange={(e) => handleChange('itemPrice', parseFloat(e.target.value) || 0)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold" />
-                  </div>
-                  <div>
-                    <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Shipping Charged</label>
-                    <input type="number" value={inputs.shippingCharged} onChange={(e) => handleChange('shippingCharged', parseFloat(e.target.value) || 0)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold" />
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-gray-100 dark:border-slate-800">
-                  <h3 className="text-sm font-bold mb-4">Costs</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Item Cost</label>
-                      <input type="number" value={inputs.cogs} onChange={(e) => handleChange('cogs', parseFloat(e.target.value) || 0)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold" />
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Location</label>
+                      <select value={selectedCountry} onChange={(e) => handleCountryChange(e.target.value)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20">
+                        {COUNTRY_PRESETS.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                      </select>
                     </div>
                     <div>
-                      <label className="block text-xs font-bold text-gray-400 uppercase mb-1">Shipping Cost</label>
-                      <input type="number" value={inputs.shippingCost} onChange={(e) => handleChange('shippingCost', parseFloat(e.target.value) || 0)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold" />
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Currency</label>
+                      <select value={inputs.currency} onChange={(e) => handleCurrencyChange(e.target.value as CurrencyCode)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20">
+                        {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
+                      </select>
                     </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Item SKU / Name</label>
+                    <div className="relative">
+                      <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                      <input
+                        type="text"
+                        placeholder="e.g. Handmade Mug"
+                        value={inputs.sku}
+                        onChange={(e) => handleChange('sku', e.target.value)}
+                        className={`w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 ${skuError ? 'ring-2 ring-red-500' : 'focus:ring-primary/20'}`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Item Price</label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">{symbol}</span>
+                        <input type="number" value={inputs.itemPrice} onChange={(e) => handleChange('itemPrice', parseFloat(e.target.value) || 0)} className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Shipping Charged</label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-bold text-sm">{symbol}</span>
+                        <input type="number" value={inputs.shippingCharged} onChange={(e) => handleChange('shippingCharged', parseFloat(e.target.value) || 0)} className="w-full pl-8 pr-4 py-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="pt-4 border-t border-gray-100 dark:border-slate-800">
+                    <h3 className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-4">Core Costs</h3>
+                    <div className="grid grid-cols-2 gap-3 mb-3">
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Materials</label>
+                        <input type="number" value={inputs.cogs} onChange={(e) => handleChange('cogs', parseFloat(e.target.value) || 0)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20" />
+                      </div>
+                      <div>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Packaging</label>
+                        <input type="number" value={inputs.packagingCost} onChange={(e) => handleChange('packagingCost', parseFloat(e.target.value) || 0)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Shipping Cost</label>
+                      <input type="number" value={inputs.shippingCost} onChange={(e) => handleChange('shippingCost', parseFloat(e.target.value) || 0)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20" />
+                    </div>
+                  </div>
+
+                  <div className="pt-6">
+                    <button onClick={handleSave} disabled={isSaving} className="w-full bg-secondary dark:bg-primary text-white py-4 rounded-xl font-black uppercase text-xs tracking-widest hover:opacity-90 transition-all flex items-center justify-center space-x-2 shadow-xl shadow-blue-100/10">
+                      {isSaving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                      <span>{isSaving ? 'Saving...' : 'Save Product'}</span>
+                    </button>
+                    {usageError && <p className="text-red-500 text-[10px] font-bold text-center mt-3 uppercase tracking-wider">{usageError}</p>}
                   </div>
                 </div>
               </section>
             </div>
 
-            {/* Right Column: Results */}
-            <div className="space-y-8">
-              <section className="bg-secondary dark:bg-slate-950 p-10 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
-                <div className="relative z-10">
-                  <h2 className="text-xs font-black text-primary uppercase tracking-widest mb-6">Results</h2>
-                  {results && (
-                    <div className="space-y-6">
-                      <div>
-                        <div className="text-5xl font-black text-primary">{formatCurrency(results.netProfit, inputs.currency)}</div>
-                        <div className="text-sm font-bold opacity-60 uppercase mt-1">Net Profit</div>
+            {/* Right Column: Dynamic Tool View (2/3 width) */}
+            <div className="xl:col-span-2 space-y-8">
+              {activeTool === 'fees' && (
+                <div className="space-y-8">
+                  <section className="bg-secondary dark:bg-slate-950 p-10 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full -mr-20 -mt-20 blur-3xl animate-pulse"></div>
+                    <div className="relative z-10">
+                      <div className="flex items-center justify-between mb-8">
+                        <h2 className="text-xs font-black text-primary uppercase tracking-[0.3em]">Net Profit Summary</h2>
+                        <button onClick={handleDownloadPDF} className="p-2 text-white/40 hover:text-white transition-colors"><Download className="w-5 h-5" /></button>
                       </div>
-                      <div className="grid grid-cols-2 gap-4 pt-6 border-t border-white/10">
-                        <div>
-                          <div className="text-xl font-black">{results.margin.toFixed(1)}%</div>
-                          <div className="text-xs font-bold opacity-60 uppercase">Margin</div>
+                      {results && (
+                        <div className="space-y-10">
+                          <div>
+                            <div className="flex items-baseline space-x-1">
+                              <span className="text-2xl font-black opacity-30">{symbol}</span>
+                              <div className="text-7xl font-black text-primary tracking-tighter">{results.netProfit.toFixed(2)}</div>
+                            </div>
+                            <div className="text-sm font-bold opacity-40 uppercase tracking-widest mt-2 flex items-center">
+                              <ShieldCheck className="w-4 h-4 mr-2" />
+                              Estimated Net Profit
+                            </div>
+                          </div>
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 pt-10 border-t border-white/5">
+                            <div>
+                              <div className="text-2xl font-black">{results.margin.toFixed(1)}%</div>
+                              <div className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">Net Margin</div>
+                            </div>
+                            <div>
+                              <div className="text-2xl font-black">{formatCurrency(results.fees.total, inputs.currency)}</div>
+                              <div className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">Total Fees</div>
+                            </div>
+                            <div className="hidden md:block">
+                              <div className="text-2xl font-black">{results.margin > 30 ? 'HEALTHY' : 'THIN'}</div>
+                              <div className="text-[10px] font-black opacity-30 uppercase tracking-[0.2em] mt-1">Margin Status</div>
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="text-xl font-black">{formatCurrency(results.fees.total, inputs.currency)}</div>
-                          <div className="text-xs font-bold opacity-60 uppercase">Fees</div>
-                        </div>
-                      </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              </section>
+                  </section>
 
-              <div className="flex gap-4">
-                <button onClick={handleDownloadPDF} className="p-4 bg-white dark:bg-slate-800 rounded-2xl text-gray-500 hover:text-primary">
-                  <Download className="w-5 h-5" />
-                </button>
-                <button onClick={handleSave} className="flex-1 bg-primary text-white py-4 rounded-2xl font-black uppercase text-xs hover:opacity-90">
-                  {isSaving ? 'Saving...' : 'Save Product'}
-                </button>
-                <button onClick={handleReset} className="p-4 bg-gray-100 dark:bg-slate-800 rounded-2xl text-gray-500 hover:text-red-500">
-                  <RotateCcw className="w-5 h-5" />
-                </button>
-              </div>
+                  {/* Fee Breakdown Card */}
+                  <div className="bg-white dark:bg-slate-900 p-8 rounded-[40px] border border-gray-100 dark:border-slate-800 shadow-sm">
+                    <h3 className="text-sm font-black text-secondary dark:text-white uppercase tracking-[0.2em] mb-8">Detailed Fee Breakdown</h3>
+                    <div className="space-y-4">
+                      {results && Object.entries(results.fees).map(([key, value]) => {
+                        if (key === 'total' || value === 0) return null;
+                        return (
+                          <div key={key} className="flex items-center justify-between group">
+                            <div className="flex items-center space-x-3">
+                              <div className="w-1.5 h-1.5 rounded-full bg-primary/40 group-hover:bg-primary transition-colors"></div>
+                              <span className="text-sm font-bold text-gray-500 dark:text-gray-400">{getFeeDisplayName(key)}</span>
+                            </div>
+                            <span className="text-sm font-black text-secondary dark:text-white">{formatCurrency(value as number, inputs.currency)}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {activeTool === 'profit' && <ProfitAnalyzer inputs={inputs} />}
+              {activeTool === 'breakeven' && <BreakEvenTool inputs={inputs} />}
+              {activeTool === 'ads' && <AdsScenarioTool inputs={inputs} />}
             </div>
           </div>
         )}
+
       </div>
     </div>
   );

@@ -12,7 +12,7 @@ export const calculateEtsyProfit = (inputs: CalculatorInputs): CalculationResult
 
   // 1. Convert all money-denominated inputs to USD for internal processing
   const moneyInputs = [
-    'itemPrice', 'cogs', 'packagingCost', 'shippingCost', 
+    'itemPrice', 'cogs', 'packagingCost', 'shippingCost',
     'shippingCharged', 'listingFee', 'processingFeeFixed'
   ] as const;
 
@@ -22,8 +22,8 @@ export const calculateEtsyProfit = (inputs: CalculatorInputs): CalculationResult
   });
 
   // Convert target profit if it's an amount
-  const usdTargetProfitValue = inputs.targetProfitType === 'amount' 
-    ? convertCurrency(inputs.targetProfitValue, targetCurrency, 'USD') 
+  const usdTargetProfitValue = inputs.targetProfitType === 'amount'
+    ? convertCurrency(inputs.targetProfitValue, targetCurrency, 'USD')
     : inputs.targetProfitValue;
 
   const {
@@ -44,7 +44,7 @@ export const calculateEtsyProfit = (inputs: CalculatorInputs): CalculationResult
   } = usdInputs;
 
   const revenue = itemPrice + shippingCharged;
-  
+
   // Basic Costs
   const directCosts = cogs + packagingCost + shippingCost;
   const returnsAllowance = (revenue * (returnsAllowancePercent / 100));
@@ -53,7 +53,7 @@ export const calculateEtsyProfit = (inputs: CalculatorInputs): CalculationResult
   const transactionFee = revenue * (transactionFeePercent / 100);
   const processingFee = (revenue * (processingFeePercent / 100)) + processingFeeFixed;
   const regulatoryFee = revenue * (regulatoryFeePercent / 100);
-  
+
   let offsiteAdsFee = 0;
   if (offsiteAdsEnabled) {
     offsiteAdsFee = Math.min(revenue * (offsiteAdsRate / 100), 100);
@@ -75,13 +75,13 @@ export const calculateEtsyProfit = (inputs: CalculatorInputs): CalculationResult
     const ra = returnsAllowancePercent / 100;
     const af = includeAds ? offsiteAdsRate / 100 : 0;
     const costs = directCosts;
-    
+
     const feeRateSum = tf + pf + rf + ra + af;
-    
+
     if (isMargin) {
       const marginRate = targetProfit / 100;
       const denominator = 1 - (feeRateSum + marginRate);
-      if (denominator <= 0) return 0; 
+      if (denominator <= 0) return 0;
       const numerator = costs + lf + pff + sc * (feeRateSum + marginRate) - sc;
       return Math.max(0, numerator / denominator);
     } else {
@@ -110,6 +110,10 @@ export const calculateEtsyProfit = (inputs: CalculatorInputs): CalculationResult
     },
     netProfit: convertCurrency(netProfit, 'USD', targetCurrency),
     margin,
+    transactionFee: convertCurrency(transactionFee, 'USD', targetCurrency),
+    paymentProcessingFee: convertCurrency(processingFee, 'USD', targetCurrency),
+    offsiteAdsFee: convertCurrency(offsiteAdsFee, 'USD', targetCurrency),
+    totalFees: convertCurrency(totalFees, 'USD', targetCurrency),
     breakEvenPrice: convertCurrency(usdBreakEvenPrice, 'USD', targetCurrency),
     recommendedPrice: convertCurrency(usdRecommendedPrice, 'USD', targetCurrency),
     offsiteAdsSafePrice: convertCurrency(usdOffsiteAdsSafePrice, 'USD', targetCurrency)

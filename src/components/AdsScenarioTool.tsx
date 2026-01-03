@@ -13,11 +13,11 @@ export const AdsScenarioTool: React.FC<AdsScenarioToolProps> = ({ inputs }) => {
     const [monthlyOrders, setMonthlyOrders] = useState(50);
 
     // Calculate scenarios
-    const calculateScenario = (offsiteAdsEnabled: boolean, adsPercent: number) => {
+    const calculateScenario = (offsiteAdsEnabled: boolean, adsRate: number) => {
         const modifiedInputs = {
             ...inputs,
             offsiteAdsEnabled,
-            offsiteAdsPercent: adsPercent
+            offsiteAdsRate: adsRate
         };
         return calculateEtsyProfit(modifiedInputs);
     };
@@ -41,12 +41,7 @@ export const AdsScenarioTool: React.FC<AdsScenarioToolProps> = ({ inputs }) => {
     const isMandatory = inputs.itemPrice * monthlyOrders * 12 > revenueThreshold;
 
     return (
-        <div className="max-w-5xl mx-auto py-8">
-            <div className="mb-8">
-                <h2 className="text-3xl font-black text-secondary mb-2">Offsite Ads Scenario Tool</h2>
-                <p className="text-gray-500">Model the impact of Etsy's Offsite Ads on your profit</p>
-            </div>
-
+        <div className="space-y-8">
             {/* Status Banner */}
             {isMandatory ? (
                 <div className="bg-orange-50 border-2 border-orange-200 rounded-2xl p-6 mb-8">

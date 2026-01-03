@@ -13,10 +13,10 @@ export const ProfitAnalyzer: React.FC<ProfitAnalyzerProps> = ({ inputs }) => {
     const currencySymbol = getCurrencySymbol(inputs.currency);
 
     // Calculate various profit metrics
-    const grossProfit = result.revenue - inputs.materialCost - inputs.laborCost - inputs.shippingCost;
+    const grossProfit = result.revenue - inputs.cogs - inputs.packagingCost - inputs.shippingCost;
     const grossMargin = (grossProfit / result.revenue) * 100;
     const netMargin = (result.netProfit / result.revenue) * 100;
-    const roi = ((result.netProfit / (inputs.materialCost + inputs.laborCost + inputs.shippingCost)) * 100);
+    const roi = ((result.netProfit / (inputs.cogs + inputs.packagingCost + inputs.shippingCost)) * 100);
 
     // Margin health assessment
     const getMarginHealth = (margin: number) => {
@@ -31,17 +31,12 @@ export const ProfitAnalyzer: React.FC<ProfitAnalyzerProps> = ({ inputs }) => {
 
     // Calculate what price would give 40% margin
     const targetMargin = 0.40;
-    const totalCosts = inputs.materialCost + inputs.laborCost + inputs.shippingCost + inputs.listingFee;
-    const variableFeeRate = (inputs.transactionFeePercent + inputs.paymentProcessingPercent) / 100;
-    const recommendedPrice = (totalCosts + inputs.paymentProcessingFixed) / (1 - variableFeeRate - targetMargin);
+    const totalCosts = inputs.cogs + inputs.packagingCost + inputs.shippingCost + inputs.listingFee;
+    const variableFeeRate = (inputs.transactionFeePercent + inputs.processingFeePercent) / 100;
+    const recommendedPrice = (totalCosts + inputs.processingFeeFixed) / (1 - variableFeeRate - targetMargin);
 
     return (
-        <div className="max-w-5xl mx-auto py-8">
-            <div className="mb-8">
-                <h2 className="text-3xl font-black text-secondary mb-2">Profit Analyzer</h2>
-                <p className="text-gray-500">Deep dive into your profit margins and financial health</p>
-            </div>
-
+        <div className="space-y-8">
             {/* Key Metrics Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {/* Gross Profit */}
@@ -99,12 +94,12 @@ export const ProfitAnalyzer: React.FC<ProfitAnalyzerProps> = ({ inputs }) => {
                     {/* Direct Costs */}
                     <div className="space-y-2">
                         <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-600">Materials</span>
-                            <span className="font-bold text-red-600">-{formatCurrency(inputs.materialCost, inputs.currency)}</span>
+                            <span className="text-gray-600">Materials (COGS)</span>
+                            <span className="font-bold text-red-600">-{formatCurrency(inputs.cogs, inputs.currency)}</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
-                            <span className="text-gray-600">Labor</span>
-                            <span className="font-bold text-red-600">-{formatCurrency(inputs.laborCost, inputs.currency)}</span>
+                            <span className="text-gray-600">Packaging</span>
+                            <span className="font-bold text-red-600">-{formatCurrency(inputs.packagingCost, inputs.currency)}</span>
                         </div>
                         <div className="flex items-center justify-between text-sm">
                             <span className="text-gray-600">Shipping</span>
@@ -134,7 +129,7 @@ export const ProfitAnalyzer: React.FC<ProfitAnalyzerProps> = ({ inputs }) => {
                         </div>
                         {result.offsiteAdsFee > 0 && (
                             <div className="flex items-center justify-between text-sm">
-                                <span className="text-gray-600">Offsite Ads ({inputs.offsiteAdsPercent}%)</span>
+                                <span className="text-gray-600">Offsite Ads ({inputs.offsiteAdsRate}%)</span>
                                 <span className="font-bold text-red-600">-{formatCurrency(result.offsiteAdsFee, inputs.currency)}</span>
                             </div>
                         )}

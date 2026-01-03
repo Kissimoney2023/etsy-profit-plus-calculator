@@ -12,13 +12,13 @@ export const BreakEvenTool: React.FC<BreakEvenToolProps> = ({ inputs }) => {
     const currencySymbol = getCurrencySymbol(inputs.currency);
 
     // Calculate break-even price
-    const totalFixedCosts = inputs.materialCost + inputs.laborCost + inputs.shippingCost + inputs.listingFee;
-    const variableFeeRate = (inputs.transactionFeePercent + inputs.paymentProcessingPercent + (inputs.offsiteAdsEnabled ? inputs.offsiteAdsPercent : 0)) / 100;
+    const totalFixedCosts = inputs.cogs + inputs.packagingCost + inputs.shippingCost + inputs.listingFee;
+    const variableFeeRate = (inputs.transactionFeePercent + inputs.processingFeePercent + (inputs.offsiteAdsEnabled ? inputs.offsiteAdsRate : 0)) / 100;
 
-    const breakEvenPrice = (totalFixedCosts + inputs.paymentProcessingFixed) / (1 - variableFeeRate);
+    const breakEvenPrice = (totalFixedCosts + inputs.processingFeeFixed) / (1 - variableFeeRate);
 
     // Calculate target price for desired margin
-    const targetPrice = (totalFixedCosts + inputs.paymentProcessingFixed) / (1 - variableFeeRate - (desiredMargin / 100));
+    const targetPrice = (totalFixedCosts + inputs.processingFeeFixed) / (1 - variableFeeRate - (desiredMargin / 100));
 
     // Calculate what happens at different price points
     const priceScenarios = [
@@ -31,24 +31,19 @@ export const BreakEvenTool: React.FC<BreakEvenToolProps> = ({ inputs }) => {
     ];
 
     const calculateProfitAtPrice = (price: number) => {
-        const revenue = price + inputs.shippingCharge;
+        const revenue = price + inputs.shippingCharged;
         const transactionFee = revenue * (inputs.transactionFeePercent / 100);
-        const paymentFee = revenue * (inputs.paymentProcessingPercent / 100) + inputs.paymentProcessingFixed;
-        const offsiteAdsFee = inputs.offsiteAdsEnabled ? revenue * (inputs.offsiteAdsPercent / 100) : 0;
+        const paymentFee = revenue * (inputs.processingFeePercent / 100) + inputs.processingFeeFixed;
+        const offsiteAdsFee = inputs.offsiteAdsEnabled ? revenue * (inputs.offsiteAdsRate / 100) : 0;
         const totalFees = inputs.listingFee + transactionFee + paymentFee + offsiteAdsFee;
-        const totalCosts = inputs.materialCost + inputs.laborCost + inputs.shippingCost;
+        const totalCosts = inputs.cogs + inputs.packagingCost + inputs.shippingCost;
         const profit = revenue - totalCosts - totalFees;
         const margin = (profit / revenue) * 100;
         return { profit, margin };
     };
 
     return (
-        <div className="max-w-5xl mx-auto py-8">
-            <div className="mb-8">
-                <h2 className="text-3xl font-black text-secondary mb-2">Break-Even Calculator</h2>
-                <p className="text-gray-500">Find the minimum price you need to charge to avoid losing money</p>
-            </div>
-
+        <div className="space-y-8">
             {/* Break-Even Price Card */}
             <div className="bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl p-8 mb-8 text-white shadow-2xl">
                 <div className="flex items-center mb-4">
@@ -82,12 +77,12 @@ export const BreakEvenTool: React.FC<BreakEvenToolProps> = ({ inputs }) => {
                     </h3>
                     <div className="space-y-3">
                         <div className="flex justify-between items-center">
-                            <span className="text-gray-600">Materials</span>
-                            <span className="font-bold text-secondary">{formatCurrency(inputs.materialCost, inputs.currency)}</span>
+                            <span className="text-gray-600">Materials (COGS)</span>
+                            <span className="font-bold text-secondary">{formatCurrency(inputs.cogs, inputs.currency)}</span>
                         </div>
                         <div className="flex justify-between items-center">
-                            <span className="text-gray-600">Labor</span>
-                            <span className="font-bold text-secondary">{formatCurrency(inputs.laborCost, inputs.currency)}</span>
+                            <span className="text-gray-600">Packaging</span>
+                            <span className="font-bold text-secondary">{formatCurrency(inputs.packagingCost, inputs.currency)}</span>
                         </div>
                         <div className="flex justify-between items-center">
                             <span className="text-gray-600">Shipping Cost</span>
@@ -116,12 +111,12 @@ export const BreakEvenTool: React.FC<BreakEvenToolProps> = ({ inputs }) => {
                         </div>
                         <div className="flex justify-between items-center">
                             <span className="text-gray-600">Payment Processing</span>
-                            <span className="font-bold text-secondary">{inputs.paymentProcessingPercent}% + {formatCurrency(inputs.paymentProcessingFixed, inputs.currency)}</span>
+                            <span className="font-bold text-secondary">{inputs.processingFeePercent}% + {formatCurrency(inputs.processingFeeFixed, inputs.currency)}</span>
                         </div>
                         {inputs.offsiteAdsEnabled && (
                             <div className="flex justify-between items-center">
                                 <span className="text-gray-600">Offsite Ads</span>
-                                <span className="font-bold text-secondary">{inputs.offsiteAdsPercent}%</span>
+                                <span className="font-bold text-secondary">{inputs.offsiteAdsRate}%</span>
                             </div>
                         )}
                         <div className="flex justify-between items-center pt-3 border-t-2 border-gray-100">
@@ -184,8 +179,8 @@ export const BreakEvenTool: React.FC<BreakEvenToolProps> = ({ inputs }) => {
                             <div
                                 key={index}
                                 className={`p-4 rounded-xl border-2 ${isNegative ? 'bg-red-50 border-red-200' :
-                                        isBreakEven ? 'bg-yellow-50 border-yellow-200' :
-                                            'bg-green-50 border-green-200'
+                                    isBreakEven ? 'bg-yellow-50 border-yellow-200' :
+                                        'bg-green-50 border-green-200'
                                     }`}
                             >
                                 <div className="flex items-center justify-between">
@@ -213,7 +208,7 @@ export const BreakEvenTool: React.FC<BreakEvenToolProps> = ({ inputs }) => {
                 <div className="bg-white rounded-xl p-4 font-mono text-sm">
                     <p className="mb-2">Break-Even Price = (Fixed Costs + Payment Fixed Fee) ÷ (1 - Variable Fee Rate)</p>
                     <p className="text-gray-600">
-                        = ({formatCurrency(totalFixedCosts, inputs.currency)} + {formatCurrency(inputs.paymentProcessingFixed, inputs.currency)}) ÷ (1 - {(variableFeeRate * 100).toFixed(2)}%)
+                        = ({formatCurrency(totalFixedCosts, inputs.currency)} + {formatCurrency(inputs.processingFeeFixed, inputs.currency)}) ÷ (1 - {(variableFeeRate * 100).toFixed(2)}%)
                     </p>
                     <p className="text-primary font-bold mt-2">= {formatCurrency(breakEvenPrice, inputs.currency)}</p>
                 </div>
