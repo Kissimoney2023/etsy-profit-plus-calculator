@@ -58,15 +58,15 @@ const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
   };
 
   return (
-    <div className="py-24 bg-white relative overflow-hidden">
+    <div className="py-20 md:py-32 bg-white relative overflow-hidden mesh-gradient">
       <SEO
         title="Pricing & Plans | Etsy Profit Calculator"
         description="Transparent pricing for serious Etsy sellers. Choose from Free, Starter, or Pro plans to unlock advanced analytics and AI tools."
       />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-24">
-          <span className="text-primary font-black text-[10px] uppercase tracking-[0.3em] mb-4 block">Transparent Pricing</span>
-          <h1 className="text-5xl md:text-7xl font-black font-heading text-secondary mb-8 tracking-tighter">Choose Your Profit Path</h1>
+          <span className="text-primary font-black text-[12px] uppercase tracking-[0.5em] mb-4 block">Transparent Pricing</span>
+          <h1 className="text-4xl md:text-8xl font-black font-heading text-secondary dark:text-white mb-8 tracking-tighter leading-tight md:leading-[0.85]">Choose Your Path</h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto font-medium">
             Stop losing money on hidden fees. Select a plan that grows with your Etsy shop.
           </p>
@@ -173,7 +173,7 @@ const PricingCard: React.FC<any> = ({ title, price, period, description, feature
   const isCurrentPlan = activePlan === plan;
 
   return (
-    <div className={`relative flex flex-col p-10 rounded-[40px] transition-all hover:-translate-y-2 ${variant === 'primary' ? 'bg-white border-4 border-primary shadow-2xl shadow-green-100 scale-105 z-10' :
+    <div className={`relative flex flex-col p-8 md:p-10 rounded-[40px] transition-all hover:-translate-y-2 ${variant === 'primary' ? 'bg-white border-4 border-primary shadow-2xl md:scale-105 z-10 my-4 md:my-0' :
       variant === 'dark' ? 'bg-secondary text-white shadow-3xl' :
         'bg-white border-2 border-gray-100 shadow-xl'
       }`}>

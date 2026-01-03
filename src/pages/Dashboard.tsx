@@ -265,11 +265,11 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
             <thead className="bg-gray-50 border-b border-gray-100">
               <tr>
                 <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">Product</th>
-                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">SKU</th>
-                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">Price</th>
-                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">Net Profit</th>
+                <th className="hidden md:table-cell px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">SKU</th>
+                <th className="hidden md:table-cell px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">Price</th>
+                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">Profit</th>
                 <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">Margin</th>
-                <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">Trend</th>
+                <th className="hidden lg:table-cell px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">Trend</th>
                 <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400"></th>
               </tr>
             </thead>
@@ -302,18 +302,17 @@ const ProductRow: React.FC<{ product: Product; onDelete: (id: string) => void | 
   return (
     <tr className="hover:bg-gray-50 transition-colors group">
       <td className="px-6 py-5">
-        <div className="font-bold text-secondary group-hover:text-primary transition-colors cursor-pointer">{product.title || 'Untitled'}</div>
+        <div className="font-black text-secondary group-hover:text-primary transition-colors cursor-pointer truncate max-w-[120px] md:max-w-none">{product.title || 'Untitled'}</div>
       </td>
-      <td className="px-6 py-5 text-sm text-gray-500 font-mono">{product.sku || '-'}</td>
-      <td className="px-6 py-5 font-bold text-secondary">${Number(inputs.itemPrice).toFixed(2)}</td>
-      <td className="px-6 py-5 font-bold text-secondary">${result.netProfit.toFixed(2)}</td>
+      <td className="hidden md:table-cell px-6 py-5 text-sm text-gray-400 font-mono">{product.sku || '-'}</td>
+      <td className="hidden md:table-cell px-6 py-5 font-bold text-secondary">${Number(inputs.itemPrice).toFixed(2)}</td>
+      <td className="px-6 py-5 font-black text-secondary">${result.netProfit.toFixed(2)}</td>
       <td className="px-6 py-5">
-        <span className={`px-3 py-1 text-xs font-black rounded-full border ${result.margin > 30 ? 'bg-green-50 text-primary border-green-100' : 'bg-red-50 text-red-500 border-red-100'}`}>
-          {result.margin.toFixed(1)}%
+        <span className={`px-3 py-1 text-[10px] font-black rounded-xl border ${result.margin > 30 ? 'bg-green-50 text-primary border-green-100' : 'bg-red-50 text-red-500 border-red-100'}`}>
+          {result.margin.toFixed(0)}%
         </span>
       </td>
-      <td className="px-6 py-5">
-        {/* Mock Trend for now */}
+      <td className="hidden lg:table-cell px-6 py-5">
         <MoreHorizontal className="w-5 h-5 text-gray-400" />
       </td>
       <td className="px-6 py-5 text-right flex justify-end space-x-2">

@@ -17,7 +17,9 @@ import {
   Linkedin,
   Sun,
   Moon,
-  ChevronRight
+  ChevronRight,
+  Zap,
+  Rocket
 } from 'lucide-react';
 import Landing from './pages/Landing';
 import CalculatorPage from './pages/Calculator';
@@ -224,10 +226,15 @@ const App: React.FC = () => {
                     key={link.path}
                     to={link.path}
                     onClick={() => setIsMenuOpen(false)}
-                    className="flex items-center justify-between p-4 bg-gray-50 dark:bg-slate-800/50 rounded-2xl text-lg font-bold text-secondary dark:text-gray-200 hover:bg-primary/5 hover:text-primary transition-all group"
+                    className="flex items-center justify-between p-5 bg-gray-50 dark:bg-slate-800/40 rounded-3xl text-lg font-black text-secondary dark:text-gray-100 hover:bg-primary/10 hover:text-primary transition-all group border border-gray-100 dark:border-slate-800"
                   >
-                    <span>{link.name}</span>
-                    <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-primary transition-colors" />
+                    <div className="flex items-center space-x-4">
+                      <div className="p-2 bg-white dark:bg-slate-700 rounded-xl shadow-sm text-gray-400 group-hover:text-primary transition-colors">
+                        {link.name === 'Calculator' ? <Calculator className="w-5 h-5" /> : link.name === 'Pricing' ? <Zap className="w-5 h-5" /> : <Rocket className="w-5 h-5" />}
+                      </div>
+                      <span>{link.name}</span>
+                    </div>
+                    <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-primary transition-colors translate-x-0 group-hover:translate-x-1" />
                   </Link>
                 ))}
               </div>

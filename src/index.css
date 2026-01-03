@@ -28,6 +28,17 @@
     box-shadow: var(--premium-shadow);
   }
 
+  @layer utilities {
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  }
+
   .mesh-gradient {
     background-image:
       radial-gradient(at 0% 0%, hsla(161, 74%, 44%, 0.15) 0px, transparent 50%),

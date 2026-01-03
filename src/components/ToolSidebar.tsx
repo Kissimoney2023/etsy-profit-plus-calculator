@@ -49,34 +49,38 @@ export const ToolSidebar: React.FC = () => {
     ];
 
     return (
-        <div className="w-full lg:w-80 flex-shrink-0 animate-in fade-in slide-in-from-left-4 duration-700">
-            <div className="glass p-8 rounded-[48px] sticky top-24 space-y-8">
-                <h3 className="text-secondary dark:text-white font-black text-xs uppercase tracking-[0.4em] mb-6 px-4">
-                    Tool Suite
-                </h3>
-                <nav className="space-y-3">
-                    {tools.map((tool) => {
-                        const isActive = location.pathname === tool.path || (tool.path === '/etsy-profit-calculator' && location.pathname === '/calculator');
-                        return (
-                            <Link
-                                key={tool.path}
-                                to={tool.path}
-                                className={`
-                                    group flex items-center space-x-4 px-6 py-4 rounded-[24px] text-sm font-black transition-all duration-300
-                                    ${isActive
-                                        ? 'bg-primary text-white shadow-xl shadow-green-500/20 translate-x-1'
-                                        : 'text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-secondary dark:hover:text-white'
-                                    }
-                                `}
-                            >
-                                <div className={`${isActive ? 'scale-110' : 'group-hover:scale-110'} transition-transform duration-300`}>
-                                    {tool.icon}
-                                </div>
-                                <span className="tracking-wide">{tool.name}</span>
-                            </Link>
-                        );
-                    })}
-                </nav>
+        <div className="w-full lg:w-80 flex-shrink-0 animate-in fade-in slide-in-from-left-4 duration-700 overflow-visible">
+            <div className="lg:sticky lg:top-24 space-y-6">
+                <div className="lg:glass p-4 lg:p-8 rounded-[32px] lg:rounded-[48px] overflow-hidden">
+                    <h3 className="hidden lg:block text-secondary dark:text-white font-black text-xs uppercase tracking-[0.4em] mb-6 px-4">
+                        Tool Suite
+                    </h3>
+
+                    {/* Horizontal Scroll for Mobile */}
+                    <nav className="flex lg:flex-col gap-3 overflow-x-auto pb-4 lg:pb-0 scrollbar-hide -mx-4 px-4 lg:mx-0 lg:px-0">
+                        {tools.map((tool) => {
+                            const isActive = location.pathname === tool.path || (tool.path === '/etsy-profit-calculator' && location.pathname === '/calculator');
+                            return (
+                                <Link
+                                    key={tool.path}
+                                    to={tool.path}
+                                    className={`
+                                        flex-shrink-0 group flex items-center space-x-3 lg:space-x-4 px-5 py-3 lg:px-6 lg:py-4 rounded-[20px] lg:rounded-[24px] text-xs lg:text-sm font-black transition-all duration-300
+                                        ${isActive
+                                            ? 'bg-primary text-white shadow-xl shadow-green-500/20 lg:translate-x-1'
+                                            : 'bg-white/50 dark:bg-slate-900/50 lg:bg-transparent text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-secondary dark:hover:text-white border border-gray-100 dark:border-slate-800 lg:border-none'
+                                        }
+                                    `}
+                                >
+                                    <div className={`${isActive ? 'scale-110' : 'group-hover:scale-110'} transition-transform duration-300`}>
+                                        {tool.icon}
+                                    </div>
+                                    <span className="tracking-wide whitespace-nowrap">{tool.name}</span>
+                                </Link>
+                            );
+                        })}
+                    </nav>
+                </div>
             </div>
         </div>
     );

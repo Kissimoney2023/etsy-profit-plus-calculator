@@ -14,14 +14,14 @@ const Landing: React.FC = () => {
         canonical="https://etsyprofitplus.com"
       />
       {/* Hero Section */}
-      <section className="relative pt-32 pb-40 transition-colors bg-transparent">
+      <section className="relative pt-20 pb-24 md:pt-32 md:pb-40 transition-colors bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <div className="inline-flex items-center space-x-2 bg-green-50 dark:bg-primary/10 text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-green-100 dark:border-primary/20 shadow-sm">
               <Zap className="w-3 h-3 fill-current" />
               <span>Verified for 2024 Fee Structure</span>
             </div>
-            <h1 className="text-6xl md:text-9xl font-black font-heading text-secondary dark:text-white mb-10 tracking-tighter leading-[0.85]">
+            <h1 className="text-5xl md:text-9xl font-black font-heading text-secondary dark:text-white mb-10 tracking-tighter leading-[0.85]">
               Scale Your Etsy <br />
               <span className="text-primary italic relative inline-block">
                 Business
@@ -105,12 +105,12 @@ const Landing: React.FC = () => {
 };
 
 const FeatureCard: React.FC<{ icon: React.ReactNode; title: string; description: string; accent: string }> = ({ icon, title, description, accent }) => (
-  <div className="glass p-12 rounded-[56px] hover:scale-[1.02] transition-all duration-500 group">
-    <div className={`mb-10 p-6 rounded-[28px] inline-block transition-transform group-hover:scale-110 group-hover:rotate-6 ${accent === 'green' ? 'bg-green-50 dark:bg-green-500/10' : accent === 'blue' ? 'bg-blue-50 dark:bg-blue-500/10' : 'bg-orange-50 dark:bg-orange-500/10'}`}>
-      {React.isValidElement(icon) ? React.cloneElement(icon as any, { className: 'w-12 h-12' }) : icon}
+  <div className="glass p-8 md:p-12 rounded-[40px] md:rounded-[56px] hover:scale-[1.01] transition-all duration-500 group">
+    <div className={`mb-8 md:mb-10 p-5 md:p-6 rounded-[24px] md:rounded-[28px] inline-block transition-transform group-hover:scale-110 group-hover:rotate-6 ${accent === 'green' ? 'bg-green-50 dark:bg-green-500/10' : accent === 'blue' ? 'bg-blue-50 dark:bg-blue-500/10' : 'bg-orange-50 dark:bg-orange-500/10'}`}>
+      {React.isValidElement(icon) ? React.cloneElement(icon as any, { className: 'w-10 h-10 md:w-12 md:h-12' }) : icon}
     </div>
-    <h3 className="text-3xl font-black text-secondary dark:text-white mb-6 tracking-tighter leading-tight">{title}</h3>
-    <p className="text-base text-gray-400 dark:text-gray-500 font-medium leading-relaxed">{description}</p>
+    <h3 className="text-2xl md:text-3xl font-black text-secondary dark:text-white mb-4 md:mb-6 tracking-tighter leading-tight">{title}</h3>
+    <p className="text-sm md:text-base text-gray-400 dark:text-gray-500 font-medium leading-relaxed">{description}</p>
   </div>
 );
 
