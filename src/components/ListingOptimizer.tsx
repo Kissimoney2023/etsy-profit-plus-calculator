@@ -11,6 +11,8 @@ interface OptimizerResult {
     seoScore: number;
 }
 
+import { UpgradeWall } from './UpgradeWall';
+
 export const ListingOptimizer: React.FC<{ user: UserProfile | null }> = ({ user }) => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -19,17 +21,23 @@ export const ListingOptimizer: React.FC<{ user: UserProfile | null }> = ({ user 
     const [result, setResult] = useState<OptimizerResult | null>(null);
     const [error, setError] = useState('');
 
-    const handleOptimize = async () => {
-        if (!user) {
-            setError('Please log in to use the Pro Optimizer.');
-            return;
-        }
-        // Check plan (optional: allow 1 free trial or restrict strictly)
-        if (user.plan === 'free') {
-            setError('This is a Pro feature. Upgrade to unlock AI optimization.');
-            return;
-        }
+    if (!user || user.plan !== 'pro') {
+        return (
+            <UpgradeWall
+                title="AI Listing Optimizer"
+                description="Unlock the power of Gemini AI to analyze your titles, descriptions, and tags for maximum Etsy SEO visibility."
+                plan="pro"
+                features={[
+                    "AI-powered Keyword Analysis",
+                    "Tag suggestions based on trends",
+                    "Readability & Sentiment scoring",
+                    "One-click Copy & Paste"
+                ]}
+            />
+        );
+    }
 
+    const handleOptimize = async () => {
         if (!title || !description) {
             setError('Please provide at least a title and brief description.');
             return;

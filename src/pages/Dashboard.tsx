@@ -19,11 +19,12 @@ import { UserProfile, Product, CalculationResult } from '../types';
 import { supabase } from '../lib/supabase';
 import { calculateEtsyProfit } from '../lib/calculator';
 
+import { SEO } from '../components/SEO';
+
 const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
-
   useEffect(() => {
     fetchProducts();
   }, [user]);
@@ -32,7 +33,6 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
     setLoading(true);
     try {
       if (user) {
-        // Fetch from Supabase
         const { data, error } = await supabase
           .from('products')
           .select('*')
@@ -41,10 +41,8 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
         if (error) throw error;
         setProducts(data || []);
       } else {
-        // Fetch from LocalStorage
         const saved = localStorage.getItem('etsy_saved_products');
         if (saved) {
-          // Adapt local storage format to Product interface
           const parsed = JSON.parse(saved);
           setProducts(parsed.map((p: any) => ({
             id: p.id,
@@ -52,7 +50,7 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
             title: p.title || p.sku,
             sku: p.sku,
             currency: p.currency,
-            inputs: p, // Store full inputs
+            inputs: p,
             created_at: p.timestamp
           })));
         }
@@ -66,13 +64,9 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
 
   const handleDelete = async (productId: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return;
-
     try {
       if (user) {
-        const { error } = await supabase
-          .from('products')
-          .delete()
-          .eq('id', productId);
+        const { error } = await supabase.from('products').delete().eq('id', productId);
         if (error) throw error;
       } else {
         const saved = localStorage.getItem('etsy_saved_products');
@@ -82,88 +76,26 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
           localStorage.setItem('etsy_saved_products', JSON.stringify(updated));
         }
       }
-      // Update UI
       setProducts(prev => prev.filter(p => p.id !== productId));
     } catch (error) {
-      console.error('Error deleting product:', error);
-      alert('Failed to delete product');
+      console.error('Error deleting:', error);
     }
   };
 
   const handleExportCSV = () => {
     if (products.length === 0) return;
-
-    // Define CSV headers
-    const headers = [
-      'ID',
-      'Title',
-      'SKU',
-      'Currency',
-      'Created At',
-      'Item Price',
-      'Net Profit',
-      'Profit Margin',
-      'Total Fees',
-      'Break Even Price'
-    ];
-
-    // Map data to CSV rows
-    const rows = products.map(product => {
-      // Re-calculate derived values since we only save inputs
-      // Note: stored inputs might be in product.inputs (Supabase) or just spread in product (LocalStorage)
-      // We need to handle both cases safely.
-      const inputs = (product.inputs || product) as any;
-
-      // Ensure specific fields required for calculation exist
-      // This maps the stored data shape to CalculatorInputs
-      const calcInputs = {
-        sku: inputs.sku || '',
-        currency: inputs.currency || 'USD',
-        itemPrice: Number(inputs.itemPrice || 0),
-        targetProfitType: inputs.targetProfitType || 'margin',
-        targetProfitValue: Number(inputs.targetProfitValue || 0),
-        cogs: Number(inputs.cogs || 0),
-        packagingCost: Number(inputs.packagingCost || 0),
-        shippingCost: Number(inputs.shippingCost || 0),
-        shippingCharged: Number(inputs.shippingCharged || 0),
-        listingFee: Number(inputs.listingFee || 0.20),
-        transactionFeePercent: Number(inputs.transactionFeePercent || 6.5),
-        processingFeePercent: Number(inputs.processingFeePercent || 3.0),
-        processingFeeFixed: Number(inputs.processingFeeFixed || 0.25),
-        offsiteAdsEnabled: Boolean(inputs.offsiteAdsEnabled),
-        offsiteAdsRate: Number(inputs.offsiteAdsRate || 15),
-        regulatoryFeePercent: Number(inputs.regulatoryFeePercent || 0),
-        returnsAllowancePercent: Number(inputs.returnsAllowancePercent || 0),
-      };
-
-      const result = calculateEtsyProfit(calcInputs);
-
-      return [
-        product.id,
-        `"${product.title?.replace(/"/g, '""') || ''}"`,
-        `"${product.sku?.replace(/"/g, '""') || ''}"`,
-        product.currency,
-        `"${new Date(product.created_at).toLocaleDateString()}"`,
-        calcInputs.itemPrice.toFixed(2),
-        result.netProfit.toFixed(2),
-        `${result.margin.toFixed(2)}%`,
-        result.fees.total.toFixed(2),
-        result.breakEvenPrice.toFixed(2)
-      ];
+    const headers = ['ID', 'Title', 'SKU', 'Currency', 'Net Profit', 'Margin'];
+    const rows = products.map(p => {
+      const inputs = (p.inputs || p) as any;
+      const res = calculateEtsyProfit(inputs);
+      return [p.id, p.title, p.sku, p.currency, res.netProfit.toFixed(2), res.margin.toFixed(2)];
     });
-
-    // Combine headers and rows
-    const csvContent = [
-      headers.join(','),
-      ...rows.map(row => row.join(','))
-    ].join('\n');
-
-    // Create download link
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const csvContent = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `etsy_inventory_export_${new Date().toISOString().slice(0, 10)}.csv`);
+    link.download = `etsy_export_${new Date().toISOString().slice(0, 10)}.csv`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -174,21 +106,16 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
     (p.sku?.toLowerCase() || '').includes(searchTerm.toLowerCase())
   );
 
-  // Derived stats
   const totalProducts = products.length;
   const avgMargin = products.length > 0 ? (products.reduce((acc, p) => {
     const inputs = (p.inputs || p) as any;
-    const result = calculateEtsyProfit(inputs);
-    return acc + result.margin;
+    return acc + calculateEtsyProfit(inputs).margin;
   }, 0) / products.length).toFixed(1) + '%' : '0%';
 
   const estMonthlyProfit = products.length > 0 ? products.reduce((acc, p) => {
     const inputs = (p.inputs || p) as any;
-    const result = calculateEtsyProfit(inputs);
-    return acc + result.netProfit; // Assuming 1 sale per month per product for "est"
+    return acc + calculateEtsyProfit(inputs).netProfit;
   }, 0).toFixed(2) : '0';
-
-
 
   if (!user && !localStorage.getItem('etsy_saved_products')) {
     return (
@@ -198,9 +125,12 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
       </div>
     );
   }
-
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <SEO
+        title="Seller Dashboard | Etsy Profit Calculator"
+        description="Manage your Etsy inventory calculations and pricing history."
+      />
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
         <div>
           <h1 className="text-3xl font-black text-secondary flex items-center space-x-3">
@@ -285,7 +215,7 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
   );
 };
 
-const ProductRow = ({ product, onDelete }: { product: Product; onDelete: (id: string) => void }) => {
+const ProductRow: React.FC<{ product: Product; onDelete: (id: string) => void | Promise<void> }> = ({ product, onDelete }) => {
   const inputs = (product.inputs || product) as any;
   const result = calculateEtsyProfit(inputs);
 

@@ -3,9 +3,16 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Zap, BarChart3, Calculator, Rocket, ArrowRight, CheckCircle2 } from 'lucide-react';
 
+import { SEO } from '../components/SEO';
+
 const Landing: React.FC = () => {
   return (
     <div className="overflow-hidden theme-transition">
+      <SEO
+        title="Etsy Profit Calculator | Fee, Margin & Pricing Tool"
+        description="The most accurate 2024 Etsy Fee Calculator. Calculate profit margins, fees, offsite ads, and break-even prices instantly."
+        canonical="https://etsyprofitplus.com"
+      />
       {/* Hero Section */}
       <section className="relative pt-24 pb-32 bg-white dark:bg-slate-950 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -37,7 +44,7 @@ const Landing: React.FC = () => {
             </div>
           </div>
         </div>
-        
+
         <div className="absolute top-0 right-0 -mr-40 -mt-40 w-[600px] h-[600px] bg-green-50 dark:bg-primary/5 rounded-full blur-[120px] -z-10 opacity-60"></div>
         <div className="absolute bottom-0 left-0 -ml-40 -mb-40 w-[500px] h-[500px] bg-blue-50 dark:bg-blue-900/5 rounded-full blur-[100px] -z-10 opacity-60"></div>
       </section>
@@ -50,21 +57,21 @@ const Landing: React.FC = () => {
             <h2 className="text-4xl md:text-5xl font-black font-heading text-secondary dark:text-white mb-6 tracking-tight">Everything You Need to Scale</h2>
             <div className="w-20 h-1.5 bg-primary mx-auto rounded-full"></div>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-            <FeatureCard 
+            <FeatureCard
               icon={<ShieldCheck className="w-10 h-10 text-primary" />}
               title="Offsite Ads Protection"
               description="Instantly identify the 'Safe Price' required to stay profitable even when Etsy takes a 15% advertising bite."
               accent="green"
             />
-            <FeatureCard 
+            <FeatureCard
               icon={<BarChart3 className="w-10 h-10 text-blue-600" />}
               title="Real-Time Analytics"
               description="Visual breakdown of every penny: Transaction fees (6.5%), listing costs, and country-specific processing rates."
               accent="blue"
             />
-            <FeatureCard 
+            <FeatureCard
               icon={<Rocket className="w-10 h-10 text-orange-500" />}
               title="Target Margin Strategy"
               description="Input your desired take-home profit, and we'll tell you exactly what your listing price needs to be."

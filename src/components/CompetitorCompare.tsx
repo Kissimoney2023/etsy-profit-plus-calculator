@@ -10,7 +10,26 @@ interface ScenarioProps {
     user: UserProfile | null;
 }
 
+import { UpgradeWall } from './UpgradeWall';
+
 export const CompetitorCompare: React.FC<ScenarioProps> = ({ inputs: initialInputs, user }) => {
+    if (!user || user.plan !== 'pro') {
+        return (
+            <div className="max-w-5xl mx-auto py-8">
+                <UpgradeWall
+                    title="Competitor Analysis Lab"
+                    description="Simulate profit scenarios against your competition. See exactly how matching their price affects your bottom line."
+                    plan="pro"
+                    features={[
+                        "Side-by-side Margin Comparison",
+                        "Price Match Simulation",
+                        "Profit Impact Analysis",
+                        "Winner Determination Logic"
+                    ]}
+                />
+            </div>
+        );
+    }
     // We clone inputs for "My Scenario" and "Competitor Scenario"
     // Ideally we default "My Scenario" to current calculator state
     const [myInputs, setMyInputs] = useState<CalculatorInputs>(initialInputs);

@@ -9,6 +9,8 @@ interface PricingProps {
   setUser: (user: UserProfile) => void;
 }
 
+import { SEO } from '../components/SEO';
+
 const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
   const navigate = useNavigate();
   const [upgradingPlan, setUpgradingPlan] = useState<PlanType | null>(null);
@@ -24,19 +26,14 @@ const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
       return;
     }
 
-    if (plan === 'free') {
-      // Handle downgrade logic or just direct
-      return;
-    }
+    if (plan === 'free') return; // Downgrade handled in portal usually
 
     const priceId = plan === 'starter'
       ? import.meta.env.VITE_STRIPE_PRICE_STARTER
       : import.meta.env.VITE_STRIPE_PRICE_PRO;
 
     if (!priceId || (!priceId.startsWith('price_') && !priceId.startsWith('plan_'))) {
-      alert(`Configuration Error: Invalid Stripe Price ID. You have set: "${priceId || 'undefined'}". It MUST start with 'price_' (not 'prod_'). Please update Vercel Environment Variables.`);
-      console.error("Invalid Price ID:", priceId);
-      setUpgradingPlan(null);
+      alert(`Configuration Error: env var missing`);
       return;
     }
 
@@ -46,33 +43,26 @@ const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
         body: {
           priceId,
           email: user.email,
-          plan, // Pass the plan name ('starter', 'pro')
+          plan,
           returnUrl: window.location.origin
         }
       });
 
       if (error) throw error;
-      if (data?.url) {
-        window.location.href = data.url;
-      }
+      if (data?.url) window.location.href = data.url;
     } catch (error: any) {
       console.error('Checkout error:', error);
-
-      // Extract error message from Supabase FunctionsHttpError
-      let errorMessage = error.message;
-      if (error.context && error.context.json && error.context.json.error) {
-        errorMessage = error.context.json.error;
-      } else if (typeof error === 'string') {
-        errorMessage = error;
-      }
-
-      alert(`Checkout Failed: ${errorMessage}`);
+      alert(`Checkout Failed: ${error.message || error}`);
       setUpgradingPlan(null);
     }
   };
 
   return (
     <div className="py-24 bg-white relative overflow-hidden">
+      <SEO
+        title="Pricing & Plans | Etsy Profit Calculator"
+        description="Transparent pricing for serious Etsy sellers. Choose from Free, Starter, or Pro plans to unlock advanced analytics and AI tools."
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-24">
           <span className="text-primary font-black text-[10px] uppercase tracking-[0.3em] mb-4 block">Transparent Pricing</span>
