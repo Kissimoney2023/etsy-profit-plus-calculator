@@ -23,7 +23,7 @@ const Landing: React.FC = () => {
             </div>
             <h1 className="text-5xl md:text-9xl font-black font-heading text-secondary dark:text-white mb-10 tracking-tighter leading-[0.85]">
               Scale Your Etsy <br />
-              <span className="text-primary italic relative inline-block">
+              <span className="text-premium italic relative inline-block">
                 Business
                 <span className="absolute -bottom-4 left-0 w-full h-4 bg-primary/20 -skew-x-12 -z-10 blur-sm"></span>
               </span>

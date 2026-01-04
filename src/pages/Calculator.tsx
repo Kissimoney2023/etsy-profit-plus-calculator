@@ -271,13 +271,13 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
                 <div className="space-y-4">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Location</label>
+                      <label>Location</label>
                       <select value={selectedCountry} onChange={(e) => handleCountryChange(e.target.value)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20">
                         {COUNTRY_PRESETS.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                       </select>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Currency</label>
+                      <label>Currency</label>
                       <select value={inputs.currency} onChange={(e) => handleCurrencyChange(e.target.value as CurrencyCode)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20">
                         {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code}</option>)}
                       </select>
@@ -285,7 +285,7 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
                   </div>
 
                   <div>
-                    <label className="block text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-widest mb-1.5 ml-1">Item SKU / Name</label>
+                    <label>Item SKU / Name</label>
                     <div className="relative">
                       <Tag className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
@@ -319,16 +319,16 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
                     <h3 className="text-[10px] font-black text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-4">Core Costs</h3>
                     <div className="grid grid-cols-2 gap-3 mb-3">
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Materials</label>
+                        <label>Materials</label>
                         <input type="number" value={inputs.cogs} onChange={(e) => handleChange('cogs', parseFloat(e.target.value) || 0)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20" />
                       </div>
                       <div>
-                        <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Packaging</label>
+                        <label>Packaging</label>
                         <input type="number" value={inputs.packagingCost} onChange={(e) => handleChange('packagingCost', parseFloat(e.target.value) || 0)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20" />
                       </div>
                     </div>
                     <div>
-                      <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1 ml-1">Shipping Cost</label>
+                      <label>Shipping Cost</label>
                       <input type="number" value={inputs.shippingCost} onChange={(e) => handleChange('shippingCost', parseFloat(e.target.value) || 0)} className="w-full p-3 bg-gray-50 dark:bg-slate-800 rounded-xl font-bold text-sm border-none focus:ring-2 focus:ring-primary/20" />
                     </div>
                   </div>
