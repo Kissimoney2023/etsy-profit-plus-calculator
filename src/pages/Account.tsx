@@ -1,12 +1,53 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { UserProfile } from '../types';
 import { CreditCard, ExternalLink, ShieldCheck, Mail, Clock, Zap, Loader2 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 const Account: React.FC<{ user: UserProfile | null; setUser: (user: UserProfile) => void }> = ({ user, setUser }) => {
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const navigate = useNavigate();
 
-  if (!user) return null;
+  useEffect(() => {
+    // If no user is passed, we might be loading or not logged in.
+    // However, since this component receives user as prop, ideally parent handles loading.
+    // If it mounts and user is null, we can redirect or show "Please login".
+    // For now, let's redirect after a short timeout if user remains null, 
+    // assuming parent would have passed user if session existed.
+    if (!user) {
+      const timer = setTimeout(() => {
+        navigate('/login');
+      }, 500); // Small delay to avoid flash if parent is resolving user
+      return () => clearTimeout(timer);
+    }
+  }, [user, navigate]);
+
+  if (!user) {
+    return (
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const getPlanDisplay = (plan: string) => {
+    switch (plan) {
+      case 'pro': return 'Pro Tier';
+      case 'starter': return 'Starter Tier';
+      default: return 'Free Tier';
+    }
+  };
+
+  const handleDevUpgrade = async () => {
+    if (!user) return;
+    const { error } = await supabase.from('profiles').update({ plan: 'pro' }).eq('id', user.id);
+    if (!error) {
+      setUser({ ...user, plan: 'pro' });
+      alert('Dev Mode: Force upgraded to Pro Tier');
+    } else {
+      alert('Error updating profile: ' + error.message);
+    }
+  };
 
   const handleManageBilling = () => {
     setIsRedirecting(true);
@@ -20,7 +61,7 @@ const Account: React.FC<{ user: UserProfile | null; setUser: (user: UserProfile)
   return (
     <div className="max-w-4xl mx-auto px-4 py-16">
       <h1 className="text-4xl font-black text-secondary mb-10">Account Settings</h1>
-      
+
       <div className="space-y-8">
         {/* Profile Card */}
         <div className="bg-white p-8 rounded-3xl border border-gray-100 shadow-xl">
@@ -49,23 +90,23 @@ const Account: React.FC<{ user: UserProfile | null; setUser: (user: UserProfile)
                 Current Subscription
               </h2>
               <div className="inline-flex items-center px-4 py-1 bg-primary rounded-full text-xs font-black uppercase tracking-widest mb-4">
-                {user.plan} Plan
+                {getPlanDisplay(user.plan)}
               </div>
               <p className="text-gray-400 text-sm max-w-sm">
-                {user.plan === 'free' 
-                  ? "You are currently on the free plan with daily usage limits." 
+                {user.plan === 'free'
+                  ? "You are currently on the free plan with daily usage limits."
                   : `Your next billing date is ${new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString()}. Manage your plan via the Stripe Billing portal.`
                 }
               </p>
             </div>
-            
+
             {user.plan === 'free' ? (
               <Link to="/pricing" className="w-full md:w-auto px-8 py-4 bg-primary text-white font-black rounded-xl hover:bg-opacity-90 transition-all flex items-center justify-center space-x-2">
                 <Zap className="w-4 h-4 fill-current" />
                 <span>Upgrade Now</span>
               </Link>
             ) : (
-              <button 
+              <button
                 onClick={handleManageBilling}
                 disabled={isRedirecting}
                 className="w-full md:w-auto px-8 py-4 bg-white text-secondary font-black rounded-xl hover:bg-gray-100 transition-all flex items-center justify-center space-x-2"
@@ -104,6 +145,26 @@ const Account: React.FC<{ user: UserProfile | null; setUser: (user: UserProfile)
             Delete Account
           </button>
         </div>
+
+        {/* Dev Tools - Only visible in development */}
+        {import.meta.env.DEV && (
+          <div className="bg-slate-900 p-8 rounded-3xl border border-slate-800 text-white">
+            <h2 className="text-lg font-bold text-blue-400 mb-4 flex items-center">
+              <Zap className="w-5 h-5 mr-2" /> Developer Tools
+            </h2>
+            <p className="text-gray-400 text-sm mb-6">
+              Since local webhooks cannot receive events from Stripe (unless using CLI), use this to force-update your local profile state for testing.
+            </p>
+            <div className="flex gap-4">
+              <button
+                onClick={handleDevUpgrade}
+                className="px-6 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg shadow-blue-900/20"
+              >
+                Force Upgrade to Pro
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

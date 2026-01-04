@@ -297,8 +297,8 @@ const App: React.FC = () => {
                 The #1 toolkit for Etsy sellers to master their margins and scale profitably. Not affiliated with Etsy, Inc.
               </p>
               <div className="flex space-x-4">
-                <SocialLink icon={<Twitter />} href={process.env.NEXT_PUBLIC_TWITTER_URL} />
-                <SocialLink icon={<Linkedin />} href={process.env.NEXT_PUBLIC_LINKEDIN_URL} />
+                <SocialLink icon={<Twitter />} href={import.meta.env.VITE_TWITTER_URL} />
+                <SocialLink icon={<Linkedin />} href={import.meta.env.VITE_LINKEDIN_URL} />
               </div>
             </div>
             <div>

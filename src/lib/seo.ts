@@ -1,7 +1,7 @@
 
 export const SITE = {
   name: 'EtsyProfit+',
-  url: process.env.NEXT_PUBLIC_APP_URL || 'https://etsyprofit-calculator.vercel.app',
+  url: import.meta.env.VITE_APP_URL || 'https://etsyprofit-calculator.vercel.app',
   twitterHandle: '@etsyprofit',
   defaultOgImage: '/og-default.png',
 };
