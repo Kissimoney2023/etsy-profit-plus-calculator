@@ -227,7 +227,7 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
   const scoreData = useMemo(() => results ? getProfitabilityScore(results.margin) : null, [results]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 py-12 flex flex-col lg:flex-row gap-8" id="calculator-report">
+    <div className="max-w-7xl mx-auto px-4 py-12 pb-32 flex flex-col lg:flex-row gap-8" id="calculator-report">
       <OnboardingTour />
       <SEO
         title={getPageTitle()}
@@ -479,7 +479,7 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
         )}
 
       </div>
-    </div>
+    </div >
   );
 };
 

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Calculator, TrendingUp, Target, Megaphone, Sparkles, Swords, Search, Globe, Camera, Download } from 'lucide-react';
+import { Calculator, TrendingUp, Target, Megaphone, Sparkles, Swords, Search, Globe, Camera, Download, Menu, X } from 'lucide-react';
+import { PWAInstallButton } from './PWAInstallButton';
 
 export const ToolSidebar: React.FC = () => {
     const location = useLocation();
@@ -53,42 +54,95 @@ export const ToolSidebar: React.FC = () => {
         }
     ];
 
-    return (
-        <div className="w-full lg:w-80 flex-shrink-0 animate-in fade-in slide-in-from-left-4 duration-700 overflow-visible">
-            <div className="lg:sticky lg:top-24 space-y-6">
-                <div className="lg:glass p-4 lg:p-8 rounded-[32px] lg:rounded-[48px] overflow-hidden">
-                    <h3 className="hidden lg:block text-secondary dark:text-white font-black text-xs uppercase tracking-[0.4em] mb-6 px-4">
-                        Tool Suite
-                    </h3>
+    const [isOpen, setIsOpen] = React.useState(false);
 
-                    {/* Horizontal Scroll for Mobile */}
-                    <nav className="flex lg:flex-col gap-3 overflow-x-auto pb-4 lg:pb-0 scrollbar-hide -mx-4 px-4 lg:mx-0 lg:px-0">
-                        {tools.map((tool) => {
-                            const isActive = location.pathname === tool.path || (tool.path === '/etsy-profit-calculator' && location.pathname === '/calculator');
-                            return (
-                                <Link
-                                    key={tool.name}
-                                    to={tool.path || '#'}
-                                    className={`
-                        flex-shrink-0 group flex items-center space-x-3 lg:space-x-4 px-5 py-3 lg:px-6 lg:py-4 rounded-[20px] lg:rounded-[24px] text-xs lg:text-sm font-black transition-all duration-300
-                        ${isActive
-                                            ? 'bg-primary text-white shadow-xl shadow-green-500/20 lg:translate-x-1'
-                                            : 'bg-white/50 dark:bg-slate-900/50 lg:bg-transparent text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-secondary dark:hover:text-white border border-gray-100 dark:border-slate-800 lg:border-none'
-                                        }
-                    `}
-                                >
-                                    <div className={`${isActive ? 'scale-110' : 'group-hover:scale-110'} transition-transform duration-300`}>
-                                        {tool.icon}
-                                    </div>
-                                    <span className="tracking-wide whitespace-nowrap">{tool.name}</span>
-                                </Link>
-                            );
-                        })}
-                    </nav>
-                    <PWAInstallButton />
+    // Close sidebar on route change
+    React.useEffect(() => {
+        setIsOpen(false);
+    }, [location]);
+
+    const SidebarContent = () => (
+        <div className="lg:glass p-4 lg:p-8 rounded-[32px] lg:rounded-[48px] overflow-hidden bg-white/95 dark:bg-slate-900/95 lg:bg-transparent h-full lg:h-auto overflow-y-auto lg:overflow-visible">
+            <h3 className="text-secondary dark:text-white font-black text-xs uppercase tracking-[0.4em] mb-6 px-4 pt-4 lg:pt-0 flex items-center justify-between">
+                <span>Toolkit</span>
+                <button onClick={() => setIsOpen(false)} className="lg:hidden p-2 -mr-2 text-gray-400 hover:text-primary">
+                    <span className="sr-only">Close menu</span>
+                    <X className="w-6 h-6" />
+                </button>
+            </h3>
+            <div className="space-y-2">
+                {tools.map((tool) => {
+                    const isActive = location.pathname === tool.path;
+                    return (
+                        <Link
+                            key={tool.path}
+                            to={tool.path}
+                            className={`group relative flex items-center space-x-3 px-4 py-4 rounded-2xl transition-all duration-300 ${isActive
+                                ? 'bg-primary text-white shadow-lg shadow-green-400/20 scale-[1.02]'
+                                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 hover:text-secondary dark:hover:text-white'
+                                }`}
+                        >
+                            <div className={`border-2 rounded-xl p-2 transition-colors duration-300 ${isActive
+                                ? 'border-primary-foreground/20 bg-primary-foreground/10'
+                                : 'border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-950 group-hover:border-primary/30 group-hover:scale-110'
+                                }`}>
+                                {React.cloneElement(tool.icon as React.ReactElement, {
+                                    className: `w-5 h-5 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-primary'}`
+                                })}
+                            </div>
+                            <span className={`text-sm font-bold tracking-wide transition-colors ${isActive ? 'text-white' : ''}`}>
+                                {tool.name}
+                            </span>
+                            {isActive && (
+                                <div className="absolute right-4 w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                            )}
+                        </Link>
+                    );
+                })}
+            </div>
+
+            <div className="mt-8 pt-8 border-t border-dashed border-gray-200 dark:border-slate-800">
+                <div className="px-4">
+                    <div className="flex items-center space-x-3 mb-2">
+                        <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">System Status</span>
+                    </div>
+                    <p className="text-xs font-medium text-gray-500 dark:text-slate-500">v2.4.0 • All Systems Operational</p>
                 </div>
             </div>
+            <PWAInstallButton />
         </div>
+    );
+
+    return (
+        <>
+            {/* Mobile Toggle Button (Floating) */}
+            <button
+                onClick={() => setIsOpen(true)}
+                className="lg:hidden fixed left-4 top-24 z-40 bg-white dark:bg-slate-800 p-3 rounded-xl shadow-xl border border-gray-100 dark:border-slate-700 text-secondary dark:text-white hover:scale-105 transition-transform"
+                aria-label="Open toolkit menu"
+            >
+                <Menu className="w-5 h-5" />
+            </button>
+
+            {/* Mobile Overlay */}
+            {isOpen && (
+                <div
+                    className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 lg:hidden animate-in fade-in duration-300"
+                    onClick={() => setIsOpen(false)}
+                />
+            )}
+
+            {/* Sidebar Container */}
+            <div className={`
+                fixed inset-y-0 left-0 w-80 z-50 transform transition-transform duration-300 ease-out lg:transform-none lg:relative lg:w-80 lg:block lg:z-auto
+                ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+            `}>
+                <div className="h-full lg:h-auto lg:sticky lg:top-24 space-y-6">
+                    <SidebarContent />
+                </div>
+            </div>
+        </>
     );
 };
 

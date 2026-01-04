@@ -59,7 +59,7 @@ export const MultiRegionTool: React.FC<{ inputs: CalculatorInputs }> = ({ inputs
     });
 
     return (
-        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 px-6 sm:px-0">
             <div className="bg-gradient-to-br from-indigo-600 to-violet-700 p-8 rounded-[40px] text-white shadow-2xl relative overflow-hidden">
                 <div className="absolute -right-10 -bottom-10 opacity-10">
                     <Globe className="w-64 h-64" />
