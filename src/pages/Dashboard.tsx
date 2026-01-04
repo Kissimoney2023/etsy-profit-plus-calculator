@@ -22,17 +22,54 @@ import { calculateEtsyProfit } from '../lib/calculator';
 import { SEO } from '../components/SEO';
 import { BulkImport } from '../components/BulkImport';
 import { InventoryTrendChart } from '../components/InventoryTrendChart';
-import { X } from 'lucide-react';
+import { X, Link2, RefreshCw, CheckCircle2, AlertCircle } from 'lucide-react';
+import { initiateEtsyConnection, exchangeEtsyCode } from '../lib/etsy-auth';
 
 const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [shopConnection, setShopConnection] = useState<any>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   useEffect(() => {
-    fetchProducts();
+    // Check for OAuth Callback
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    const state = params.get('state');
+
+    if (code && state) {
+      handleEtsyCallback(code, state);
+    } else if (user) {
+      fetchShopConnection();
+    }
   }, [user]);
+
+  const fetchShopConnection = async () => {
+    if (!user) return;
+    const { data } = await supabase.from('shop_connections').select('*').eq('platform', 'etsy').single();
+    if (data) setShopConnection(data);
+  };
+
+  const handleEtsyCallback = async (code: string, state: string) => {
+    setIsConnecting(true);
+    // clean url
+    window.history.replaceState({}, document.title, window.location.pathname);
+
+    try {
+      const result = await exchangeEtsyCode(code, state);
+      if (result.success) {
+        setShopConnection(result.shop || { shop_name: 'Connected' });
+        // alert('Shop connected successfully!');
+      }
+    } catch (e: any) {
+      console.error(e);
+      alert('Failed to connect shop: ' + e.message);
+    } finally {
+      setIsConnecting(false);
+    }
+  };
 
   const fetchProducts = async () => {
     setLoading(true);
@@ -192,6 +229,25 @@ const Dashboard: React.FC<{ user: UserProfile | null }> = ({ user }) => {
           >
             Bulk Import Shop
           </button>
+
+          {user && (
+            shopConnection ? (
+              <div className="flex items-center space-x-2 bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 px-6 py-3 rounded-xl font-bold border border-green-100 dark:border-green-500/20">
+                <CheckCircle2 className="w-5 h-5" />
+                <span>{shopConnection.shop_name || 'Shop Connected'}</span>
+              </div>
+            ) : (
+              <button
+                onClick={initiateEtsyConnection}
+                disabled={isConnecting}
+                className="bg-white dark:bg-slate-900 text-secondary dark:text-white px-6 py-3 rounded-xl font-bold border border-gray-100 dark:border-slate-800 hover:bg-gray-50 transition-all flex items-center space-x-2"
+              >
+                {isConnecting ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Link2 className="w-5 h-5" />}
+                <span>{isConnecting ? 'Connecting...' : 'Connect Shop'}</span>
+              </button>
+            )
+          )}
+
           <Link to="/calculator" className="bg-primary text-white px-6 py-3 rounded-xl font-bold shadow-lg shadow-green-100 flex items-center space-x-2 hover:bg-opacity-90 transition-all">
             <Plus className="w-5 h-5" />
             <span>New Calculation</span>
