@@ -30,7 +30,7 @@ const Landing: React.FC = () => {
               <span className="text-secondary dark:text-white block md:inline"> with AI Intelligence.</span>
             </h1>
             <p className="max-w-2xl mx-auto text-xl text-slate-500 dark:text-slate-400 mb-12 font-medium leading-relaxed">
-              Ditch the spreadsheets. Our <strong>AI Trend Hunter</strong>, <strong>Competitor Spy</strong>, and <strong>Profit Calculator</strong> give you an unfair unfair advantage in 2024.
+              Ditch the spreadsheets. Our <strong>AI Trend Hunter</strong>, <strong>Competitor Spy</strong>, and <strong>Profit Calculator</strong> give you an unfair advantage in 2024.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
               <Link to="/etsy-trend-hunter" className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-10 py-5 rounded-2xl text-lg font-black shadow-2xl shadow-violet-500/30 hover:shadow-violet-500/40 hover:-translate-y-1 transition-all flex items-center justify-center space-x-3 group">
