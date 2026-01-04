@@ -21,7 +21,7 @@ const BlogListing: React.FC = () => {
   const categories = Array.from(new Set(ALL_POSTS.map(p => p.category)));
 
   return (
-    <div className="py-24 bg-white min-h-screen">
+    <div className="py-24 bg-white dark:bg-transparent min-h-screen">
       <SEO
         title="Etsy Seller Academy | Guides & Resources"
         description="Expert guides on Etsy fees, pricing strategies, and profitability. Learn how to master your margins."
@@ -29,8 +29,8 @@ const BlogListing: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-20">
           <span className="text-primary font-black text-[10px] uppercase tracking-[0.3em] mb-4 block">Etsy Seller Academy</span>
-          <h1 className="text-5xl md:text-7xl font-black font-heading text-secondary mb-8 tracking-tighter italic">Master Your Margins.</h1>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto font-medium">Expert guides, pricing strategies, and updates on Etsy's fee structure.</p>
+          <h1 className="text-5xl md:text-7xl font-black font-heading text-secondary dark:text-white mb-8 tracking-tighter italic">Master Your Margins.</h1>
+          <p className="text-xl text-gray-400 dark:text-slate-400 max-w-2xl mx-auto font-medium">Expert guides, pricing strategies, and updates on Etsy's fee structure.</p>
         </div>
 
         {/* Filters & Search */}
@@ -38,7 +38,7 @@ const BlogListing: React.FC = () => {
           <div className="flex flex-wrap items-center justify-center gap-2">
             <Link
               to="/blog"
-              className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${!categoryFilter ? 'bg-primary text-white shadow-lg' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}
+              className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${!categoryFilter ? 'bg-primary text-white shadow-lg' : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-700'}`}
             >
               All Posts
             </Link>
@@ -46,7 +46,7 @@ const BlogListing: React.FC = () => {
               <Link
                 key={cat}
                 to={`/blog?category=${cat}`}
-                className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${categoryFilter === cat ? 'bg-primary text-white shadow-lg' : 'bg-gray-100 text-gray-400 hover:bg-gray-200'}`}
+                className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${categoryFilter === cat ? 'bg-primary text-white shadow-lg' : 'bg-gray-100 dark:bg-slate-800 text-gray-400 dark:text-slate-400 hover:bg-gray-200 dark:hover:bg-slate-700'}`}
               >
                 {cat}
               </Link>
@@ -59,7 +59,7 @@ const BlogListing: React.FC = () => {
               placeholder="Search articles..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-6 py-4 bg-gray-50 border-2 border-transparent focus:border-primary/20 focus:bg-white rounded-2xl outline-none transition-all font-bold text-secondary"
+              className="w-full pl-12 pr-6 py-4 bg-gray-50 dark:bg-slate-800 border-2 border-transparent focus:border-primary/20 focus:bg-white dark:focus:bg-slate-700 rounded-2xl outline-none transition-all font-bold text-secondary dark:text-white"
             />
           </div>
         </div>
@@ -83,7 +83,7 @@ const BlogListing: React.FC = () => {
 };
 
 const PostCard: React.FC<{ post: any }> = ({ post }) => (
-  <Link to={`/blog/${post.slug}`} className="group flex flex-col h-full bg-white rounded-[32px] border-2 border-gray-50 overflow-hidden hover:border-primary/20 hover:shadow-2xl hover:shadow-green-100 transition-all">
+  <Link to={`/blog/${post.slug}`} className="group flex flex-col h-full bg-white dark:bg-slate-900 rounded-[32px] border-2 border-gray-50 dark:border-slate-800 overflow-hidden hover:border-primary/20 hover:shadow-2xl hover:shadow-green-100 dark:hover:shadow-green-900/20 transition-all">
     <div className="h-56 bg-gray-100 relative overflow-hidden">
       {post.image ? (
         <img
@@ -103,9 +103,9 @@ const PostCard: React.FC<{ post: any }> = ({ post }) => (
         <span className="flex items-center"><Calendar className="w-3 h-3 mr-1.5" />{post.date}</span>
         <span className="flex items-center"><Clock className="w-3 h-3 mr-1.5" />{post.readingTime}</span>
       </div>
-      <h3 className="text-2xl font-black text-secondary mb-4 leading-tight group-hover:text-primary transition-colors">{post.title}</h3>
-      <p className="text-gray-400 font-medium text-sm leading-relaxed mb-6 line-clamp-3">{post.description}</p>
-      <div className="mt-auto flex items-center text-secondary font-black uppercase text-xs tracking-widest group-hover:translate-x-1 transition-transform">
+      <h3 className="text-2xl font-black text-secondary dark:text-white mb-4 leading-tight group-hover:text-primary transition-colors">{post.title}</h3>
+      <p className="text-gray-400 dark:text-gray-500 font-medium text-sm leading-relaxed mb-6 line-clamp-3">{post.description}</p>
+      <div className="mt-auto flex items-center text-secondary dark:text-white font-black uppercase text-xs tracking-widest group-hover:translate-x-1 transition-transform">
         <span>Read Full Guide</span>
         <ArrowRight className="ml-2 w-4 h-4 text-primary" />
       </div>
