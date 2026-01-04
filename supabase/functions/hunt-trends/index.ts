@@ -51,7 +51,8 @@ serve(async (req) => {
       }
     `
 
-        const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=' + apiKey, {
+        // Use Gemini 1.5 Flash (newer, more reliable model)
+        const response = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + apiKey, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,15 +60,36 @@ serve(async (req) => {
             body: JSON.stringify({
                 contents: [{
                     parts: [{ text: prompt }]
-                }]
+                }],
+                generationConfig: {
+                    temperature: 0.9,
+                    topK: 1,
+                    topP: 1,
+                    maxOutputTokens: 2048,
+                }
             })
         })
 
+        if (!response.ok) {
+            const errorData = await response.text()
+            console.error('Gemini API HTTP Error:', response.status, errorData);
+            throw new Error(`Gemini API returned ${response.status}: ${errorData.substring(0, 200)}`)
+        }
+
         const data = await response.json()
 
+        // Log the full response for debugging
+        console.log('Gemini API Response:', JSON.stringify(data, null, 2));
+
         if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-            console.error('Gemini API Error:', data);
-            throw new Error('Failed to generate trends from AI')
+            console.error('Gemini API Error - No candidates:', data);
+
+            // Check for safety ratings or other blocks
+            if (data.promptFeedback?.blockReason) {
+                throw new Error(`Content blocked: ${data.promptFeedback.blockReason}`)
+            }
+
+            throw new Error('AI did not return any results. Please try a different keyword.')
         }
 
         const textResponse = data.candidates[0].content.parts[0].text
@@ -80,8 +102,8 @@ serve(async (req) => {
                 headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             })
         } catch (e) {
-            console.error('JSON Parse Error:', jsonStr);
-            throw new Error('AI returned invalid JSON');
+            console.error('JSON Parse Error. Raw response:', jsonStr);
+            throw new Error('AI returned invalid JSON. Please try again.');
         }
 
     } catch (error: any) {
@@ -99,3 +121,4 @@ serve(async (req) => {
         })
     }
 })
+
