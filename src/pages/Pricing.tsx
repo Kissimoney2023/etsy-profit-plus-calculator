@@ -58,7 +58,7 @@ const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
   };
 
   return (
-    <div className="py-20 md:py-32 bg-white relative overflow-hidden mesh-gradient">
+    <div className="py-20 md:py-32 bg-white dark:bg-transparent relative overflow-hidden mesh-gradient">
       <SEO
         title="Pricing & Plans | Etsy Profit Calculator"
         description="Transparent pricing for serious Etsy sellers. Choose from Free, Starter, or Pro plans to unlock advanced analytics and AI tools."
@@ -142,7 +142,7 @@ const Pricing: React.FC<PricingProps> = ({ user, setUser }) => {
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-16">
             <HelpCircle className="w-12 h-12 text-primary mx-auto mb-6" />
-            <h2 className="text-3xl font-black text-secondary uppercase tracking-tight">Frequently Asked Questions</h2>
+            <h2 className="text-3xl font-black text-secondary dark:text-white uppercase tracking-tight">Frequently Asked Questions</h2>
           </div>
           <div className="space-y-6">
             <FaqItem
@@ -173,9 +173,9 @@ const PricingCard: React.FC<any> = ({ title, price, period, description, feature
   const isCurrentPlan = activePlan === plan;
 
   return (
-    <div className={`relative flex flex-col p-8 md:p-10 rounded-[40px] transition-all hover:-translate-y-2 ${variant === 'primary' ? 'bg-white border-4 border-primary shadow-2xl md:scale-105 z-10 my-4 md:my-0' :
-      variant === 'dark' ? 'bg-secondary text-white shadow-3xl' :
-        'bg-white border-2 border-gray-100 shadow-xl'
+    <div className={`relative flex flex-col p-8 md:p-10 rounded-[40px] transition-all hover:-translate-y-2 ${variant === 'primary' ? 'bg-white dark:bg-slate-900 border-4 border-primary shadow-2xl md:scale-105 z-10 my-4 md:my-0' :
+      variant === 'dark' ? 'bg-secondary dark:bg-slate-800 text-white shadow-3xl' :
+        'bg-white dark:bg-slate-900 border-2 border-gray-100 dark:border-slate-800 shadow-xl'
       }`}>
       {popular && (
         <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-primary text-white text-[10px] font-black px-6 py-2 rounded-full uppercase tracking-widest shadow-lg">Most Popular</div>
@@ -186,7 +186,7 @@ const PricingCard: React.FC<any> = ({ title, price, period, description, feature
           <span className="text-5xl font-black tracking-tighter">${price}</span>
           <span className={`text-sm font-bold ml-2 ${variant === 'dark' ? 'text-gray-400' : 'text-gray-400'}`}>{period}</span>
         </div>
-        <p className={`text-sm font-medium leading-relaxed px-4 ${variant === 'dark' ? 'text-gray-400' : 'text-gray-500'}`}>{description}</p>
+        <p className={`text-sm font-medium leading-relaxed px-4 ${variant === 'dark' ? 'text-gray-400' : 'text-gray-500 dark:text-gray-400'}`}>{description}</p>
       </div>
       <ul className="space-y-4 mb-10 flex-grow">
         {features.map((f: any, i: number) => (
@@ -194,7 +194,7 @@ const PricingCard: React.FC<any> = ({ title, price, period, description, feature
             <div className={`p-1 rounded-full ${variant === 'dark' ? 'bg-primary/20 text-primary' : 'bg-green-100 text-primary'}`}>
               <Check className="w-3 h-3" />
             </div>
-            <span className={variant === 'dark' ? 'text-gray-300' : 'text-gray-600'}>{f.text}</span>
+            <span className={variant === 'dark' ? 'text-gray-300' : 'text-gray-600 dark:text-gray-300'}>{f.text}</span>
           </li>
         ))}
       </ul>
@@ -217,16 +217,16 @@ const PricingCard: React.FC<any> = ({ title, price, period, description, feature
 const FaqItem: React.FC<{ question: string; answer: string }> = ({ question, answer }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   return (
-    <div className="bg-white border-2 border-gray-100 rounded-3xl overflow-hidden shadow-sm transition-all hover:border-primary/20">
+    <div className="bg-white dark:bg-slate-900 border-2 border-gray-100 dark:border-slate-800 rounded-3xl overflow-hidden shadow-sm transition-all hover:border-primary/20">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-8 py-6 flex items-center justify-between text-left group"
       >
-        <span className="font-black text-secondary tracking-tight group-hover:text-primary transition-colors">{question}</span>
+        <span className="font-black text-secondary dark:text-white tracking-tight group-hover:text-primary transition-colors">{question}</span>
         <ChevronDown className={`w-5 h-5 text-gray-300 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
       {isOpen && (
-        <div className="px-8 pb-8 text-gray-500 font-medium leading-relaxed text-sm border-t border-gray-50 pt-4 animate-in fade-in duration-300">
+        <div className="px-8 pb-8 text-gray-500 dark:text-gray-400 font-medium leading-relaxed text-sm border-t border-gray-50 dark:border-slate-800 pt-4 animate-in fade-in duration-300">
           {answer}
         </div>
       )}
