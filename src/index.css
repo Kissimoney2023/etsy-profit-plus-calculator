@@ -27,19 +27,27 @@
   .dark h3,
   .dark h4 {
     @apply text-white tracking-tight leading-tight;
-    text-shadow: 0 0 40px rgba(255, 255, 255, 0.05);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    /* Stronger shadow for separation */
   }
 
   .dark p {
     @apply text-slate-300 leading-relaxed font-medium;
   }
 
-  .dark span:not(.text-primary):not(.text-white) {
+  /* Only target unstyled spans to avoid overwriting badges */
+  .dark span:not([class*="text-"]) {
     @apply text-slate-400;
   }
 
   .dark label {
-    @apply text-slate-300 font-black uppercase text-[10px] tracking-wider mb-2 block bg-slate-800/40 px-3 py-1 rounded-lg w-fit;
+    @apply text-slate-200 font-bold uppercase text-[10px] tracking-wider mb-2 block bg-slate-800 px-3 py-1.5 rounded-lg w-fit border border-slate-700;
+  }
+
+  .dark input,
+  .dark select,
+  .dark textarea {
+    @apply bg-slate-950 border-slate-800 text-white placeholder:text-slate-600 focus:bg-slate-900 focus:border-primary/50 transition-all font-medium;
   }
 
   .dark input,
