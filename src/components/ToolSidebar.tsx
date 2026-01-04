@@ -43,6 +43,7 @@ export const ToolSidebar: React.FC = () => {
         },
         {
             name: 'Multi-Region Strategy',
+            path: '/etsy-multi-region-strategy',
             icon: <Globe className="w-5 h-5" />
         },
         {
