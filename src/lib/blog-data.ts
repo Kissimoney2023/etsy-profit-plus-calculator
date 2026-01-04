@@ -97,6 +97,22 @@ export const BLOG_POSTS: BlogPostData[] = [
     faqs: [
       { q: "Do I pay different fees for international orders?", a: "No, you pay the processing fee based on YOUR shop's location, not the customer's location." }
     ]
+  },
+  {
+    title: "How to Find Hidden Etsy Niches in Seconds with AI",
+    slug: "how-to-find-hidden-etsy-niches-ai",
+    description: "Stop guessing. Learn how to use Gemini AI to uncover low-competition, high-profit sub-niches that nobody else is talking about.",
+    category: "Strategy",
+    date: "Jan 03, 2025",
+    readingTime: "8 min read",
+    keywords: ["etsy niches", "ai trend hunter", "gemini ai", "etsy seo"],
+    image: "/blog-images/ai-trend-hunter-guide.png",
+    imageAlt: "AI Trend Hunter Tool finding hidden niches on Etsy",
+    author: "AI Strategist",
+    content: "POST_6_CONTENT", // Placeholder string until imported
+    faqs: [
+      { q: "Is using AI for market research cheating?", a: "No, it's smart business. Big retailers use data science; now you have the same power." }
+    ]
   }
 ];
 

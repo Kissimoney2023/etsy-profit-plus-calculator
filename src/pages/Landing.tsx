@@ -17,35 +17,35 @@ const Landing: React.FC = () => {
       <section className="relative pt-20 pb-24 md:pt-32 md:pb-40 transition-colors bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="inline-flex items-center space-x-2 bg-green-50 dark:bg-primary/10 text-primary px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-green-100 dark:border-primary/20 shadow-sm">
+            <div className="inline-flex items-center space-x-2 bg-violet-50 dark:bg-violet-500/10 text-violet-600 dark:text-violet-400 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-8 border border-violet-100 dark:border-violet-500/20 shadow-sm animate-pulse">
               <Zap className="w-3 h-3 fill-current" />
-              <span>Verified for 2024 Fee Structure</span>
+              <span>New: Gemini AI Integration</span>
             </div>
             <h1 className="text-5xl md:text-9xl font-black font-heading text-secondary dark:text-white mb-10 tracking-tighter leading-[0.85]">
               Scale Your Etsy <br />
               <span className="text-premium italic relative inline-block">
-                Business
+                Empire
                 <span className="absolute -bottom-4 left-0 w-full h-4 bg-primary/20 -skew-x-12 -z-10 blur-sm"></span>
               </span>
-              <span className="text-secondary dark:text-white block md:inline"> with Precision.</span>
+              <span className="text-secondary dark:text-white block md:inline"> with AI Intelligence.</span>
             </h1>
             <p className="max-w-2xl mx-auto text-xl text-slate-500 dark:text-slate-400 mb-12 font-medium leading-relaxed">
-              Ditch the spreadsheets. Our professional calculator accounts for every sneaky fee, including regulatory costs and Offsite Ads protection.
+              Ditch the spreadsheets. Our <strong>AI Trend Hunter</strong>, <strong>Competitor Spy</strong>, and <strong>Profit Calculator</strong> give you an unfair unfair advantage in 2024.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-6">
-              <Link to="/calculator" className="w-full sm:w-auto bg-primary text-white px-10 py-5 rounded-2xl text-lg font-black shadow-2xl shadow-green-200/20 hover:shadow-green-300/30 hover:-translate-y-1 transition-all flex items-center justify-center space-x-3 group">
-                <Calculator className="w-6 h-6 group-hover:rotate-12 transition-transform" />
-                <span className="uppercase tracking-widest">Launch Calculator</span>
+              <Link to="/etsy-trend-hunter" className="w-full sm:w-auto bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-10 py-5 rounded-2xl text-lg font-black shadow-2xl shadow-violet-500/30 hover:shadow-violet-500/40 hover:-translate-y-1 transition-all flex items-center justify-center space-x-3 group">
+                <Rocket className="w-6 h-6 group-hover:rotate-12 transition-transform" />
+                <span className="uppercase tracking-widest">Hunt Trends Free</span>
               </Link>
-              <Link to="/pricing" className="w-full sm:w-auto bg-white dark:bg-slate-900 border-2 border-gray-100 dark:border-slate-800 text-secondary dark:text-white px-10 py-5 rounded-2xl text-lg font-black hover:border-primary hover:bg-gray-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center group uppercase tracking-widest">
-                <span>View Plans</span>
+              <Link to="/calculator" className="w-full sm:w-auto bg-white dark:bg-slate-900 border-2 border-gray-100 dark:border-slate-800 text-secondary dark:text-white px-10 py-5 rounded-2xl text-lg font-black hover:border-primary hover:bg-gray-50 dark:hover:bg-slate-800 transition-all flex items-center justify-center group uppercase tracking-widest">
+                <span>View Calculator</span>
                 <ArrowRight className="ml-3 w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
             </div>
           </div>
         </div>
 
-        <div className="absolute top-0 right-0 -mr-40 -mt-40 w-[600px] h-[600px] bg-green-50 dark:bg-primary/5 rounded-full blur-[120px] -z-10 opacity-60"></div>
+        <div className="absolute top-0 right-0 -mr-40 -mt-40 w-[600px] h-[600px] bg-violet-50 dark:bg-violet-900/10 rounded-full blur-[120px] -z-10 opacity-60"></div>
         <div className="absolute bottom-0 left-0 -ml-40 -mb-40 w-[500px] h-[500px] bg-blue-50 dark:bg-blue-900/5 rounded-full blur-[100px] -z-10 opacity-60"></div>
       </section>
 
@@ -53,28 +53,28 @@ const Landing: React.FC = () => {
       <section className="py-32 relative bg-transparent">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-24">
-            <span className="text-primary font-black text-[12px] uppercase tracking-[0.5em] mb-4 block">Professional Grade</span>
-            <h2 className="text-4xl md:text-6xl font-black font-heading text-secondary dark:text-white mb-8 tracking-tighter">Everything to Scale.</h2>
+            <span className="text-primary font-black text-[12px] uppercase tracking-[0.5em] mb-4 block">New AI Suite</span>
+            <h2 className="text-4xl md:text-6xl font-black font-heading text-secondary dark:text-white mb-8 tracking-tighter">Everything to Dominate.</h2>
             <div className="w-24 h-2 bg-primary mx-auto rounded-full blur-[1px]"></div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <FeatureCard
-              icon={<ShieldCheck className="w-10 h-10 text-primary" />}
-              title="Offsite Ads Protection"
-              description="Instantly identify the 'Safe Price' required to stay profitable even when Etsy takes a 15% advertising bite."
-              accent="green"
+              icon={<Rocket className="w-10 h-10 text-violet-600" />}
+              title="AI Trend Hunter"
+              description="Stop guessing what to sell. Our Gemini-powered AI finds hidden, low-competition niches with high profit potential in seconds."
+              accent="purple"
             />
             <FeatureCard
-              icon={<BarChart3 className="w-10 h-10 text-blue-600" />}
-              title="Real-Time Analytics"
-              description="Visual breakdown of every penny: Transaction fees (6.5%), listing costs, and country-specific processing rates."
-              accent="blue"
+              icon={<ShieldCheck className="w-10 h-10 text-rose-500" />}
+              title="Competitor Strategist"
+              description="Don't just undercut blindly. Our AI analyzes your rival's price and tells you exactly how to position your product to win."
+              accent="red"
             />
             <FeatureCard
-              icon={<Rocket className="w-10 h-10 text-orange-500" />}
-              title="Target Margin Strategy"
-              description="Input your desired take-home profit, and we'll tell you exactly what your listing price needs to be."
+              icon={<Zap className="w-10 h-10 text-amber-500" />}
+              title="Real-Time Sync"
+              description="Connect your Etsy shop securely. We auto-import all your listings so you can calculate profits for your entire inventory instantly."
               accent="orange"
             />
           </div>
