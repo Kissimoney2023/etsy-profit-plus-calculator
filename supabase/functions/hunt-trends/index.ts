@@ -84,8 +84,16 @@ serve(async (req) => {
             throw new Error('AI returned invalid JSON');
         }
 
-    } catch (error) {
-        return new Response(JSON.stringify({ error: error.message }), {
+    } catch (error: any) {
+        console.error('Hunt Trends Error:', {
+            message: error.message,
+            stack: error.stack,
+            apiKeyExists: !!Deno.env.get('GEMINI_API_KEY')
+        });
+        return new Response(JSON.stringify({
+            error: error.message,
+            details: error.stack?.split('\n')[0] || 'No additional details'
+        }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
             status: 400,
         })

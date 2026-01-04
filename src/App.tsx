@@ -87,6 +87,21 @@ const App: React.FC = () => {
     return () => subscription.unsubscribe();
   }, []);
 
+  useEffect(() => {
+    // Poll for profile update if upgrade parameter exists (e.g. return from Stripe)
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('upgrade') === 'success' && user?.id) {
+      console.log('[App] Upgrade detected, polling profile...');
+      let attempts = 0;
+      const interval = setInterval(() => {
+        attempts++;
+        fetchProfile(user.id);
+        if (attempts > 10) clearInterval(interval);
+      }, 3000);
+      return () => clearInterval(interval);
+    }
+  }, [window.location.search, user?.id]);
+
   const fetchProfile = async (userId: string) => {
     try {
       const { data, error } = await supabase
