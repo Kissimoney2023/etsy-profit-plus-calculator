@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Calculator, TrendingUp, Target, Megaphone, Sparkles, Swords, Search, Globe, Camera } from 'lucide-react';
+import { Calculator, TrendingUp, Target, Megaphone, Sparkles, Swords, Search, Globe, Camera, Download } from 'lucide-react';
 
 export const ToolSidebar: React.FC = () => {
     const location = useLocation();
@@ -66,15 +66,15 @@ export const ToolSidebar: React.FC = () => {
                             const isActive = location.pathname === tool.path || (tool.path === '/etsy-profit-calculator' && location.pathname === '/calculator');
                             return (
                                 <Link
-                                    key={tool.path}
-                                    to={tool.path}
+                                    key={tool.name}
+                                    to={tool.path || '#'}
                                     className={`
-                                        flex-shrink-0 group flex items-center space-x-3 lg:space-x-4 px-5 py-3 lg:px-6 lg:py-4 rounded-[20px] lg:rounded-[24px] text-xs lg:text-sm font-black transition-all duration-300
-                                        ${isActive
+                        flex-shrink-0 group flex items-center space-x-3 lg:space-x-4 px-5 py-3 lg:px-6 lg:py-4 rounded-[20px] lg:rounded-[24px] text-xs lg:text-sm font-black transition-all duration-300
+                        ${isActive
                                             ? 'bg-primary text-white shadow-xl shadow-green-500/20 lg:translate-x-1'
                                             : 'bg-white/50 dark:bg-slate-900/50 lg:bg-transparent text-gray-400 dark:text-gray-500 hover:bg-gray-50 dark:hover:bg-slate-800 hover:text-secondary dark:hover:text-white border border-gray-100 dark:border-slate-800 lg:border-none'
                                         }
-                                    `}
+                    `}
                                 >
                                     <div className={`${isActive ? 'scale-110' : 'group-hover:scale-110'} transition-transform duration-300`}>
                                         {tool.icon}
@@ -84,8 +84,46 @@ export const ToolSidebar: React.FC = () => {
                             );
                         })}
                     </nav>
+                    <PWAInstallButton />
                 </div>
             </div>
         </div>
     );
 };
+
+const PWAInstallButton: React.FC = () => {
+    const [deferredPrompt, setDeferredPrompt] = React.useState<any>(null);
+
+    React.useEffect(() => {
+        const handler = (e: any) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+        };
+        window.addEventListener('beforeinstallprompt', handler);
+        return () => window.removeEventListener('beforeinstallprompt', handler);
+    }, []);
+
+    const handleInstall = async () => {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setDeferredPrompt(null);
+        }
+    };
+
+    if (!deferredPrompt) return null;
+
+    return (
+        <div className="px-4 pb-4">
+            <button
+                onClick={handleInstall}
+                className="w-full flex items-center justify-center space-x-2 bg-gradient-to-r from-primary to-emerald-600 text-white p-4 rounded-2xl font-black uppercase text-xs tracking-widest shadow-lg shadow-green-500/20 hover:scale-[1.02] active:scale-95 transition-all"
+            >
+                <Download className="w-5 h-5" />
+                <span>Install App</span>
+            </button>
+        </div>
+    );
+};
+
