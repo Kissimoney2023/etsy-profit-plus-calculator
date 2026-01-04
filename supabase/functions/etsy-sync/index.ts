@@ -78,8 +78,43 @@ serve(async (req) => {
                     status: 'success'
                 })
 
-                // TODO: Here we would actually map 'listingsData.results' to the 'products' table.
-                // For MVP, we just log and update the 'last_synced_at'
+                // Map and upsert listings to 'products' table
+                const productsToUpsert = listingsData.results.map((listing: any) => ({
+                    user_id: conn.user_id,
+                    title: listing.title,
+                    sku: listing.skus?.[0] || listing.title.substring(0, 20), // Fallback if no SKU
+                    currency: listing.currency_code || 'USD',
+                    item_price: listing.price.amount / listing.price.divisor,
+                    shipping_charged: 0, // Etsy API sometimes separates this, defaulting to free/incorporated for now
+                    platform_id: listing.listing_id.toString(), // Store external ID to avoid duplicates
+                    inputs: {
+                        // Store full calculated defaults
+                        sku: listing.skus?.[0] || listing.title,
+                        itemPrice: listing.price.amount / listing.price.divisor,
+                        currency: listing.currency_code || 'USD',
+                        shippingCharged: 0,
+                        cogs: 0, // User must enter this
+                        shippingCost: 0,
+                        packagingCost: 0,
+                        listingFee: 0.20,
+                        transactionFeePercent: 6.5,
+                        processingFeePercent: 3.0,
+                        processingFeeFixed: 0.25,
+                        offsiteAdsEnabled: false,
+                        targetProfitValue: 30, // Default goal
+                        targetProfitType: 'margin'
+                    },
+                    updated_at: new Date().toISOString()
+                }));
+
+                if (productsToUpsert.length > 0) {
+                    const { error: upsertError } = await supabaseClient
+                        .from('products')
+                        .upsert(productsToUpsert, { onConflict: 'user_id, platform_id' }) // Ensure we have a unique constraint or similar logic
+
+                    if (upsertError) console.error('Error upserting products:', upsertError)
+                }
+
                 await supabaseClient.from('shop_connections').update({ last_synced_at: new Date().toISOString() }).eq('id', conn.id)
 
             } else {
