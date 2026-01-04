@@ -4,8 +4,9 @@ import React, { useState } from 'react';
 import { CalculatorInputs, CalculationResult, CurrencyCode, UserProfile } from '../types';
 import { calculateEtsyProfit } from '../lib/calculator';
 import { formatCurrency, getCurrencySymbol } from '../lib/currency';
-import { RefreshCw, TrendingUp, TrendingDown, Swords } from 'lucide-react';
+import { RefreshCw, TrendingUp, TrendingDown, Swords, BrainCircuit, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 import { UpgradeWall } from './UpgradeWall';
+import { supabase } from '../lib/supabase';
 
 interface ScenarioProps {
     inputs: CalculatorInputs;
@@ -38,6 +39,9 @@ export const CompetitorCompare: React.FC<ScenarioProps> = ({ inputs: initialInpu
         itemPrice: initialInputs.itemPrice * 0.9, // Default competitor cheap
         shippingCharged: 0 // Free shipping?
     });
+    const [aiAnalysis, setAiAnalysis] = useState<any>(null);
+    const [analyzing, setAnalyzing] = useState(false);
+    const [error, setError] = useState('');
 
     const myResult = calculateEtsyProfit(myInputs);
     const compResult = calculateEtsyProfit(compInputs);
@@ -52,6 +56,36 @@ export const CompetitorCompare: React.FC<ScenarioProps> = ({ inputs: initialInpu
 
     const handleMyChange = (key: keyof CalculatorInputs, val: any) => setMyInputs(prev => ({ ...prev, [key]: val }));
     const handleCompChange = (key: keyof CalculatorInputs, val: any) => setCompInputs(prev => ({ ...prev, [key]: val }));
+
+    const handleAnalyze = async () => {
+        setAnalyzing(true);
+        setError('');
+        setAiAnalysis(null);
+        try {
+            const { data, error } = await supabase.functions.invoke('analyze-matchup', {
+                body: {
+                    myProduct: {
+                        price: myInputs.itemPrice,
+                        shipping: myInputs.shippingCharged,
+                        cost: myResult.totalCosts,
+                        profit: myResult.netProfit,
+                        margin: myResult.margin
+                    },
+                    competitorProduct: {
+                        price: compInputs.itemPrice,
+                        shipping: compInputs.shippingCharged
+                    }
+                }
+            });
+            if (error) throw error;
+            setAiAnalysis(data);
+        } catch (e: any) {
+            setError('AI Analysis failed. Please try again.');
+            console.error(e);
+        } finally {
+            setAnalyzing(false);
+        }
+    };
 
     const symbol = getCurrencySymbol(myInputs.currency);
 
@@ -167,6 +201,61 @@ export const CompetitorCompare: React.FC<ScenarioProps> = ({ inputs: initialInpu
                     )}
                 </div>
             </div>
+
+            <div className="flex justify-center">
+                <button
+                    onClick={handleAnalyze}
+                    disabled={analyzing}
+                    className="bg-gradient-to-r from-violet-600 to-indigo-600 text-white px-8 py-4 rounded-2xl font-black uppercase text-xs tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl shadow-violet-500/20 flex items-center space-x-2 disabled:opacity-50"
+                >
+                    {analyzing ? <Loader2 className="w-5 h-5 animate-spin" /> : <BrainCircuit className="w-5 h-5" />}
+                    <span>{analyzing ? 'Analyzing Strategy...' : 'Ask AI Strategist'}</span>
+                </button>
+            </div>
+
+            {error && (
+                <div className="text-center text-red-500 font-bold bg-red-50 p-4 rounded-xl max-w-lg mx-auto">
+                    <AlertCircle className="w-5 h-5 inline mr-2" /> {error}
+                </div>
+            )}
+
+            {aiAnalysis && (
+                <div className="bg-white dark:bg-slate-900 border-2 border-violet-100 dark:border-violet-500/10 p-8 rounded-[40px] relative overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-700">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-violet-500/5 rounded-full blur-3xl -mr-12 -mt-12"></div>
+                    <div className="relative z-10">
+                        <div className="flex items-center space-x-3 text-violet-600 mb-6">
+                            <Sparkles className="w-6 h-6" />
+                            <h3 className="text-sm font-black uppercase tracking-[0.2em]">Strategist Verdict</h3>
+                        </div>
+                        <h4 className="text-4xl font-black text-secondary dark:text-white mb-6 tracking-tight">
+                            {aiAnalysis.verdict}
+                        </h4>
+                        <p className="text-gray-500 dark:text-gray-400 font-medium text-lg leading-relaxed max-w-3xl mb-8">
+                            {aiAnalysis.analysis}
+                        </p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-gray-100 dark:border-slate-800">
+                            <div>
+                                <div className="text-xs font-bold text-violet-400 uppercase tracking-widest mb-4">Recommendation</div>
+                                <div className="text-xl font-bold text-secondary dark:text-gray-200">
+                                    {aiAnalysis.recommendation}
+                                </div>
+                            </div>
+                            <div>
+                                <div className="text-xs font-bold text-violet-400 uppercase tracking-widest mb-4">Key Factors</div>
+                                <ul className="space-y-2">
+                                    {aiAnalysis.bullets.map((b: string, i: number) => (
+                                        <li key={i} className="flex items-start text-sm font-bold text-gray-500">
+                                            <span className="w-1.5 h-1.5 bg-violet-400 rounded-full mt-1.5 mr-2 flex-shrink-0"></span>
+                                            {b}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
