@@ -33,6 +33,7 @@ import { ProfitChart } from '../components/ProfitChart';
 import { OnboardingTour } from '../components/OnboardingTour';
 import { TrendHunter } from '../components/TrendHunter';
 import { MultiRegionTool } from '../components/MultiRegionTool';
+import { ImageAuditor } from '../components/ImageAuditor';
 
 declare global {
   interface Window {
@@ -211,6 +212,7 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
       case 'breakeven': return 'Etsy Break-Even Calculator';
       case 'trend': return 'Etsy AI Trend Hunter';
       case 'region': return 'Etsy Multi-Region Pricing Strategy';
+      case 'image-auditor': return 'Etsy AI Image Auditor';
       default: return 'Etsy Profit & Fee Calculator';
     }
   };
@@ -243,8 +245,9 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
                   activeTool === 'ads' ? 'Offsite Ads Analytics' :
                     activeTool === 'trend' ? 'AI Trend Hunter' :
                       activeTool === 'region' ? 'Multi-Region Strategy' :
-                        activeTool === 'profit' ? 'Profit Strategy Analyzer' :
-                          'Etsy Fee Calculator'}
+                        activeTool === 'image-auditor' ? 'AI Image Auditor' :
+                          activeTool === 'profit' ? 'Profit Strategy Analyzer' :
+                            'Etsy Fee Calculator'}
           </h1>
         </div>
 
@@ -256,6 +259,8 @@ const CalculatorPage: React.FC<{ user: UserProfile | null; toolType?: string }> 
           <TrendHunter user={user} />
         ) : activeTool === 'region' ? (
           <MultiRegionTool inputs={inputs} />
+        ) : activeTool === 'image-auditor' ? (
+          <ImageAuditor />
         ) : (
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
             {/* Left Column: Inputs (1/3 width) */}

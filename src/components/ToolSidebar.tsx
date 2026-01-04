@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Calculator, TrendingUp, Target, Megaphone, Sparkles, Swords, Search, Globe } from 'lucide-react';
+import { Calculator, TrendingUp, Target, Megaphone, Sparkles, Swords, Search, Globe, Camera } from 'lucide-react';
 
 export const ToolSidebar: React.FC = () => {
     const location = useLocation();
@@ -43,8 +43,12 @@ export const ToolSidebar: React.FC = () => {
         },
         {
             name: 'Multi-Region Strategy',
-            path: '/etsy-multi-region-strategy',
             icon: <Globe className="w-5 h-5" />
+        },
+        {
+            name: 'AI Image Auditor',
+            path: '/etsy-image-auditor',
+            icon: <Camera className="w-5 h-5" />
         }
     ];
 
